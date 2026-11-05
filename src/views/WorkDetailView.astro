@@ -1,0 +1,196 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry, render } from 'astro:content';
+import Callout from '@/components/Callout.astro';
+import CodeCopy from '@/components/CodeCopy.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localeHref, otherLocale, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { getTranslation, getWorks, slugOf, type Work } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  work: Work;
+}
+
+const { locale, work } = Astro.props;
+const t = useTranslations(locale);
+const { Content } = await render(work);
+const slug = slugOf(work);
+
+const all = await getWorks(locale);
+const index = all.findIndex((entry) => entry.id === work.id);
+const prev = index > 0 ? all[index - 1] : undefined;
+const next = index >= 0 && index < all.length - 1 ? all[index + 1] : undefined;
+
+const other = otherLocale(locale);
+const translation = await getTranslation('works', other, slug);
+const alternates: Partial<Record<Locale, string>> = { [locale]: localeHref(locale, `/works/${slug}/`) };
+if (translation) alternates[other] = localeHref(other, `/works/${slug}/`);
+
+const relatedPost = work.data.relatedPost
+  ? await getEntry('blog', `${locale}/${work.data.relatedPost}`)
+  : undefined;
+
+const { links } = work.data;
+const websiteHost = links.website ? new URL(links.website).host : undefined;
+const linkRows = [
+  { label: 'GitHub', url: links.github },
+  { label: 'Website', url: links.website },
+  { label: 'App Store', url: links.appStore },
+  { label: 'Google Play', url: links.playStore },
+  ...links.other.map((item) => ({ label: item.label, url: item.url })),
+];
+const typeLabel = t(`works.type.${work.data.type}`);
+const shots = work.data.screenshots.length > 0
+  ? work.data.screenshots
+  : work.data.cover
+    ? [{ src: work.data.cover, alt: work.data.coverAlt ?? '' }]
+    : [];
+---
+
+<BaseLayout title={work.data.title} description={work.data.description} alternates={alternates}>
+  <article data-pagefind-body>
+    <header class="border-b border-rule">
+      <div class="wrap flex flex-col gap-5 pt-14 pb-10">
+        <p class="mono m-0 flex gap-2.5 text-fg-3" data-pagefind-ignore>
+          <a href={localeHref(locale, '/works/')} class="hover:text-fg">WORKS</a>
+          <span aria-hidden="true">/</span>
+          <span class="text-accent-ink">{typeLabel.toUpperCase()}</span>
+        </p>
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div class="flex flex-col gap-2.5">
+            <h1 class="h1 m-0">{work.data.title}</h1>
+            <p class="m-0 max-w-[32em] text-[17px] text-pretty text-fg-2">{work.data.description}</p>
+          </div>
+          {
+            (links.github || links.website) && (
+              <div class="flex flex-wrap gap-2" data-pagefind-ignore>
+                {links.github && (
+                  <a href={links.github} rel="noopener" class="btn primary">
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.4-1.1-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5a3.9 3.9 0 0 1 1-2.7c-.1-.3-.5-1.3.1-2.7 0 0 .9-.3 2.8 1a9.5 9.5 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .6 1.4.2 2.4.1 2.7a3.9 3.9 0 0 1 1 2.7c0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"></path></svg>
+                    GitHub
+                  </a>
+                )}
+                {links.website && (
+                  <a href={links.website} rel="noopener" class="btn">
+                    {websiteHost}
+                    <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
+                  </a>
+                )}
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap main-side pt-10 pb-[72px]">
+      <div class="flex min-w-0 flex-col gap-10">
+        {
+          shots.length > 0 && (
+            <div class="gallery" aria-label={t('works.screenshots')}>
+              {shots.map((shot) => (
+                <div class="shot">
+                  <Image src={shot.src} alt={shot.alt} widths={[480, 960]} sizes="(min-width: 768px) 420px, 100vw" />
+                </div>
+              ))}
+            </div>
+          )
+        }
+        <div class="prose flush">
+          <Content />
+          {
+            relatedPost && (
+              <Callout type="note" title={t('works.relatedPost')}>
+                <p>
+                  <a href={localeHref(locale, `/blog/${work.data.relatedPost}/`)}>{relatedPost.data.title}</a>
+                </p>
+              </Callout>
+            )
+          }
+        </div>
+        {
+          (prev || next) && (
+            <nav
+              aria-label={t('works.otherProjects')}
+              class="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-px border border-rule bg-rule"
+              data-pagefind-ignore
+            >
+              {prev && (
+                <a href={localeHref(locale, `/works/${slugOf(prev)}/`)} class="cell flex flex-col gap-1.5 px-5 py-[18px]">
+                  <span class="label">← PREV</span>
+                  <span class="text-[15px] font-medium">{prev.data.title}</span>
+                </a>
+              )}
+              {next && (
+                <a href={localeHref(locale, `/works/${slugOf(next)}/`)} class="cell flex flex-col gap-1.5 px-5 py-[18px] text-right">
+                  <span class="label">NEXT →</span>
+                  <span class="text-[15px] font-medium">{next.data.title}</span>
+                </a>
+              )}
+            </nav>
+          )
+        }
+      </div>
+
+      <aside class="flex flex-col gap-7" data-pagefind-ignore>
+        <dl class="kv grid-cols-[88px_1fr]">
+          <dt>TYPE</dt>
+          <dd>{typeLabel}{work.data.kind && ` · ${work.data.kind}`}</dd>
+          {work.data.role && <><dt>ROLE</dt><dd>{work.data.role}</dd></>}
+          {work.data.period && <><dt>PERIOD</dt><dd>{work.data.period}</dd></>}
+          {
+            work.data.status && (
+              <>
+                <dt>STATUS</dt>
+                <dd class:list={[work.data.active && 'text-accent-ink']}>
+                  {work.data.active && '● '}
+                  {work.data.status}
+                </dd>
+              </>
+            )
+          }
+          {work.data.license && <><dt>LICENSE</dt><dd>{work.data.license}</dd></>}
+        </dl>
+        {
+          work.data.stack.length > 0 && (
+            <div class="flex flex-col gap-2.5">
+              <h2 class="label m-0">STACK</h2>
+              <div class="flex flex-wrap gap-1.5">
+                {work.data.stack.map((item) => (
+                  <span class="tag">{item}</span>
+                ))}
+              </div>
+            </div>
+          )
+        }
+        <div class="flex flex-col gap-2.5">
+          <h2 class="label m-0">LINKS</h2>
+          <ul class="list-rule">
+            {
+              linkRows.map((row) =>
+                row.url ? (
+                  <li>
+                    <a href={row.url} rel="noopener">
+                      <span>{row.label}</span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  </li>
+                ) : (
+                  <li>
+                    <span class="text-fg-3">
+                      <span>{row.label}</span>
+                      <span>—</span>
+                    </span>
+                  </li>
+                ),
+              )
+            }
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </article>
+  <CodeCopy locale={locale} />
+</BaseLayout>

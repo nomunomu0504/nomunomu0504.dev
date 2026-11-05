@@ -1,0 +1,61 @@
+---
+/**
+ * First-visit cookie notice (opt-out model). Ads are on by default; "Essential only" turns ad
+ * cookies off and "OK" just dismisses. The choice lives in localStorage and can be reopened from
+ * the footer. Rendered only when a cookie-setting service is configured.
+ */
+import { localeHref, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const enabled = Boolean(import.meta.env.PUBLIC_ADSENSE_CLIENT || import.meta.env.PUBLIC_GISCUS_REPO);
+---
+
+{
+  enabled && (
+    <div class="cookie" role="dialog" aria-label={t('cookie.title')} data-cookie hidden>
+      <p class="m-0 leading-relaxed">
+        {t('cookie.body')} <a href={localeHref(locale, '/privacy/')} class="ink-link">{t('footer.privacy')}</a>
+      </p>
+      <div class="flex shrink-0 gap-2">
+        <button type="button" class="btn ghost sm" data-consent="essential">{t('cookie.essential')}</button>
+        <button type="button" class="btn primary sm" data-consent="all">{t('cookie.accept')}</button>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  const banner = document.querySelector<HTMLElement>('[data-cookie]');
+  if (banner) {
+    const read = () => {
+      try {
+        return localStorage.getItem('consent');
+      } catch {
+        return null;
+      }
+    };
+    const show = () => {
+      banner.hidden = false;
+    };
+    if (!read()) show();
+    banner.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const value = button.dataset.consent ?? 'essential';
+        try {
+          localStorage.setItem('consent', value);
+        } catch {
+          // ignore
+        }
+        banner.hidden = true;
+        window.dispatchEvent(new CustomEvent('consent:changed', { detail: value }));
+      });
+    });
+    document.querySelectorAll('[data-cookie-settings]').forEach((el) => el.addEventListener('click', show));
+  }
+</script>

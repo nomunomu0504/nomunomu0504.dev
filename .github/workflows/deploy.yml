@@ -1,0 +1,42 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          PUBLIC_ADSENSE_CLIENT: ${{ vars.PUBLIC_ADSENSE_CLIENT }}
+          PUBLIC_ADSENSE_SLOT_LEADERBOARD: ${{ vars.PUBLIC_ADSENSE_SLOT_LEADERBOARD }}
+          PUBLIC_ADSENSE_SLOT_IN_ARTICLE: ${{ vars.PUBLIC_ADSENSE_SLOT_IN_ARTICLE }}
+          PUBLIC_ADSENSE_SLOT_RECTANGLE: ${{ vars.PUBLIC_ADSENSE_SLOT_RECTANGLE }}
+          PUBLIC_ADSENSE_SLOT_SKYSCRAPER: ${{ vars.PUBLIC_ADSENSE_SLOT_SKYSCRAPER }}
+          PUBLIC_ADSENSE_SLOT_LIST: ${{ vars.PUBLIC_ADSENSE_SLOT_LIST }}
+          PUBLIC_GISCUS_REPO: ${{ vars.PUBLIC_GISCUS_REPO }}
+          PUBLIC_GISCUS_REPO_ID: ${{ vars.PUBLIC_GISCUS_REPO_ID }}
+          PUBLIC_GISCUS_CATEGORY: ${{ vars.PUBLIC_GISCUS_CATEGORY }}
+          PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.PUBLIC_GISCUS_CATEGORY_ID }}
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy

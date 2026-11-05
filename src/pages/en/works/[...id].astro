@@ -1,0 +1,15 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import WorkDetailView from '@/views/WorkDetailView.astro';
+import { getWorks, slugOf } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const works = await getWorks('en');
+  return works.map((work) => ({ params: { id: slugOf(work) }, props: { work } }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { work } = Astro.props as Props;
+---
+
+<WorkDetailView locale="en" work={work} />

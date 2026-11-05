@@ -1,0 +1,26 @@
+---
+/**
+ * Renders the default slot to HTML and injects the optional "ad" slot before the second <h2>,
+ * matching the in-article placement in the ad map. Articles with fewer than two sections get
+ * no in-article ad at all (ad map rule), so the slot is simply dropped.
+ */
+const html = await Astro.slots.render('default');
+const ad = Astro.slots.has('ad') ? await Astro.slots.render('ad') : '';
+
+function nthIndex(haystack: string, needle: string, n: number): number {
+  let index = -1;
+  for (let i = 0; i < n; i += 1) {
+    index = haystack.indexOf(needle, index + 1);
+    if (index === -1) return -1;
+  }
+  return index;
+}
+
+let output = html;
+if (ad) {
+  const at = nthIndex(html, '<h2', 2);
+  if (at >= 0) output = `${html.slice(0, at)}${ad}${html.slice(at)}`;
+}
+---
+
+<div class="prose" set:html={output} />

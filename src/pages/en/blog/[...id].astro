@@ -1,0 +1,15 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import BlogPostView from '@/views/BlogPostView.astro';
+import { getPosts, slugOf } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts('en');
+  return posts.map((post) => ({ params: { id: slugOf(post) }, props: { post } }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { post } = Astro.props as Props;
+---
+
+<BlogPostView locale="en" post={post} />

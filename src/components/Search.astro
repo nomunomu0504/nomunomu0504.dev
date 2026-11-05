@@ -1,0 +1,35 @@
+---
+/**
+ * Pagefind Component UI searchbox. The index and UI bundle are generated after `astro build`,
+ * so dev mode renders a disabled input in the same shape instead of a broken widget.
+ */
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+  placeholder?: string;
+  class?: string;
+}
+
+const { locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+const placeholder = Astro.props.placeholder ?? t('blog.search');
+---
+
+<div class:list={['relative w-full', className]} data-pagefind-ignore>
+  {
+    import.meta.env.PROD ? (
+      <>
+        <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+        <script is:inline type="module" src="/pagefind/pagefind-component-ui.js" />
+        <pagefind-searchbox placeholder={placeholder} />
+      </>
+    ) : (
+      <>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" class="pointer-events-none absolute top-[14px] left-[13px] text-fg-3"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input type="search" class="input" placeholder={placeholder} aria-label={placeholder} disabled title={t('blog.searchDevNote')} />
+      </>
+    )
+  }
+</div>

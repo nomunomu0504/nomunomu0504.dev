@@ -1,0 +1,45 @@
+---
+import Search from '@/components/Search.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localeHref } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { site } from '@/lib/site';
+
+const ja = useTranslations('ja');
+const en = useTranslations('en');
+const issues = `${site.social.github}/nomunomu0504/issues/new`;
+---
+
+<BaseLayout title="404" noindex alternates={{ ja: '/404/' }}>
+  <section class="dotgrid flex flex-1 items-center">
+    <div class="wrap grid w-full grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-end gap-12 py-24">
+      <div class="flex flex-col gap-6">
+        <p class="mono m-0 text-accent-ink">{ja('notFound.code')}</p>
+        <h1 class="display m-0 text-fg" set:html={ja('notFound.title')} />
+        <p class="m-0 max-w-[30em] text-base text-pretty text-fg-2">{ja('notFound.body')}</p>
+        <p class="m-0 max-w-[30em] text-sm text-pretty text-fg-3" lang="en">{en('notFound.body')}</p>
+        <Search locale="ja" placeholder={ja('notFound.search')} class="max-w-[420px]" />
+        <div class="flex flex-wrap gap-2.5">
+          <a href={localeHref('ja', '/')} class="btn primary">{ja('notFound.home')}</a>
+          <a href={localeHref('ja', '/blog/')} class="btn">Blog</a>
+          <a href={localeHref('ja', '/works/')} class="btn">Works</a>
+        </div>
+      </div>
+      <dl class="kv w-full max-w-[420px] justify-self-end">
+        <dt>STATUS</dt>
+        <dd>404</dd>
+        <dt>PATH</dt>
+        <dd data-path>/</dd>
+        <dt>EDGE</dt>
+        <dd>Cloudflare</dd>
+        <dt>REPORT</dt>
+        <dd><a href={issues} rel="noopener" class="ink-link">{ja('notFound.report')}</a></dd>
+      </dl>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const path = document.querySelector('[data-path]');
+  if (path) path.textContent = window.location.pathname;
+</script>

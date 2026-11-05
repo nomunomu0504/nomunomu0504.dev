@@ -1,0 +1,46 @@
+---
+/** Adds a Copy button to every code block in the article body. Include once per article page. */
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div hidden data-code-copy-i18n data-copy={t('code.copy')} data-copied={t('code.copied')} data-label={t('code.copyLabel')}></div>
+
+<script>
+  const i18n = document.querySelector<HTMLElement>('[data-code-copy-i18n]')?.dataset ?? {};
+  const icon =
+    '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>';
+  const done =
+    '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 5 5L20 7"></path></svg>';
+
+  document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
+    if (pre.querySelector('.code-copy')) return;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy';
+    button.setAttribute('aria-label', i18n.label ?? 'Copy code');
+    button.innerHTML = `${icon}<span>${i18n.copy ?? 'Copy'}</span>`;
+    button.addEventListener('click', async () => {
+      const text = pre.querySelector('code')?.innerText ?? pre.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        button.innerHTML = `${done}<span>${i18n.copied ?? 'Copied'}</span>`;
+        button.dataset.copied = '1';
+        window.setTimeout(() => {
+          button.innerHTML = `${icon}<span>${i18n.copy ?? 'Copy'}</span>`;
+          delete button.dataset.copied;
+        }, 2000);
+      } catch {
+        // Clipboard may be unavailable (insecure context); leave the button as is.
+      }
+    });
+    pre.appendChild(button);
+  });
+</script>

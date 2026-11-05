@@ -1,0 +1,193 @@
+---
+import PostRow from '@/components/PostRow.astro';
+import ProjectCell from '@/components/ProjectCell.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { now } from '@/data/now';
+import { stack } from '@/data/stack';
+import { localeHref, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { countByType, getPosts, getWorks } from '@/lib/content';
+import { site } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const posts = (await getPosts(locale)).slice(0, 5);
+const allWorks = await getWorks(locale);
+const works = allWorks.filter((work) => work.data.featured).slice(0, 6);
+const types = countByType(allWorks);
+const sideCounts = [
+  ['OSS', types.get('oss') ?? 0],
+  ['Apps', (types.get('app') ?? 0) + (types.get('saas') ?? 0)],
+] as const;
+const side = sideCounts
+  .filter(([, n]) => n > 0)
+  .map(([label, n]) => `${label} × ${n}`)
+  .join(' · ');
+const dot = (iso: string) => iso.replace(/-/g, '.');
+const socials = [
+  { href: site.social.github, label: 'GitHub' },
+  { href: site.social.x, label: 'X' },
+  { href: site.social.lapras, label: 'LAPRAS' },
+  { href: localeHref(locale, '/rss.xml'), label: 'RSS' },
+];
+---
+
+<BaseLayout title={site.name} description={site.description[locale]}>
+  <section id="top" class="dotgrid border-b border-rule">
+    <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-end gap-12 pt-[88px] pb-[72px]">
+      <div class="flex flex-col gap-7">
+        <p class="mono m-0 flex flex-wrap items-center gap-3.5 text-accent-ink">
+          <span>{site.name.toUpperCase()}</span>
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-rule-2"></span>
+          <span>{site.role}</span>
+          <span aria-hidden="true" class="inline-block h-px w-6 bg-rule-2"></span>
+          <span>{site.location}</span>
+        </p>
+        <h1 class="m-0 max-w-[560px]">
+          <!-- Hand-drawn wordmark from the Ledger design: "nomunomu" (ink) over "0504" (accent). -->
+          <svg role="img" aria-label={site.handle} viewBox="0 -1 72 26" class="block h-auto w-full overflow-visible" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <g stroke="var(--fg)">
+              <path transform="translate(0 0)" d="M0.75 10V3M0.75 5.4Q0.75 3 3.3 3Q5.85 3 5.85 5.4V10"></path>
+              <path transform="translate(7.9 0)" d="M0.75 6.5A2.55 3.5 0 1 0 5.85 6.5A2.55 3.5 0 1 0 0.75 6.5Z"></path>
+              <path transform="translate(15.8 0)" d="M0.75 10V3M0.75 5.4Q0.75 3 3.05 3Q5.35 3 5.35 5.4V10M5.35 5.4Q5.35 3 7.65 3Q9.95 3 9.95 5.4V10"></path>
+              <path transform="translate(27.8 0)" d="M0.75 3V7.6Q0.75 10 3.3 10Q5.85 10 5.85 7.6V3M5.85 3V10"></path>
+              <path transform="translate(35.7 0)" d="M0.75 10V3M0.75 5.4Q0.75 3 3.3 3Q5.85 3 5.85 5.4V10"></path>
+              <path transform="translate(43.6 0)" d="M0.75 6.5A2.55 3.5 0 1 0 5.85 6.5A2.55 3.5 0 1 0 0.75 6.5Z"></path>
+              <path transform="translate(51.5 0)" d="M0.75 10V3M0.75 5.4Q0.75 3 3.05 3Q5.35 3 5.35 5.4V10M5.35 5.4Q5.35 3 7.65 3Q9.95 3 9.95 5.4V10"></path>
+              <path transform="translate(63.5 0)" d="M0.75 3V7.6Q0.75 10 3.3 10Q5.85 10 5.85 7.6V3M5.85 3V10"></path>
+            </g>
+            <g stroke="var(--accent-ink)">
+              <path transform="translate(0 14)" d="M0.75 5A2.55 4.25 0 1 0 5.85 5A2.55 4.25 0 1 0 0.75 5ZM1.9 8.2L4.7 1.8"></path>
+              <path transform="translate(7.9 14)" d="M5.6 0.75H1.3L0.95 4.9Q2.2 4.3 3.4 4.3Q5.85 4.3 5.85 7.2Q5.85 9.25 3.4 9.25Q1.7 9.25 0.9 8.1"></path>
+              <path transform="translate(15.8 14)" d="M0.75 5A2.55 4.25 0 1 0 5.85 5A2.55 4.25 0 1 0 0.75 5ZM1.9 8.2L4.7 1.8"></path>
+              <path transform="translate(23.7 14)" d="M4.7 9.25V0.75L0.9 6.6H6"></path>
+            </g>
+            <path d="M32.9 23.3H71.5" stroke="var(--rule-2)" stroke-width="0.35"></path>
+          </svg>
+        </h1>
+        <p class="m-0 max-w-[34em] text-[17px] text-pretty text-fg-2">{site.intro[locale]}</p>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2.5">
+          <a href={localeHref(locale, '/works/')} class="btn">
+            {t('home.viewWorks')}
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+          <nav aria-label="SNS" class="mono flex gap-5 text-fg-2">
+            {socials.map((item) => <a href={item.href} rel="me noopener" class="underline-link">{item.label}</a>)}
+          </nav>
+        </div>
+      </div>
+      <dl class="kv w-full max-w-[420px] justify-self-end">
+        <dt>ROLE</dt>
+        <dd>CTO · Mirai Studio</dd>
+        <dt>SIDE</dt>
+        <dd>{side || '—'}</dd>
+        <dt>STATUS</dt>
+        <dd class="flex items-center gap-2">
+          <span aria-hidden="true" class="inline-block size-[7px] rounded-full bg-accent"></span>
+          {t('home.openTo')}
+        </dd>
+      </dl>
+    </div>
+  </section>
+
+  {
+    works.length > 0 && (
+      <section id="works" class="border-b border-rule">
+        <div class="wrap flex flex-col gap-7 pt-14 pb-16">
+          <div class="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 class="h2 numbered m-0">
+              <span class="num">01</span>
+              {t('home.works')}
+            </h2>
+            <a href={localeHref(locale, '/works/')} class="mono underline-link text-fg-2">{t('home.allWorks')}</a>
+          </div>
+          <div class="two">
+            {works.map((work) => (
+              <ProjectCell work={work} locale={locale} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section id="stack" class="border-b border-rule">
+    <div class="wrap flex flex-col gap-7 pt-14 pb-16">
+      <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h2 class="h2 numbered m-0"><span class="num">02</span>{t('home.stack')}</h2>
+        <p class="mono m-0 text-fg-3">DERIVED FROM {stack.repos} PUBLIC REPOS · UPDATED {dot(stack.updated)}</p>
+      </div>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))] gap-px border border-rule bg-rule">
+        {
+          stack.groups.map((group) => (
+            <div class="cell flex flex-col px-6 pt-5 pb-3">
+              <h3 class="label m-0 mb-2">{group.label}</h3>
+              <ul class="m-0 list-none p-0">
+                {group.items.map((item) => (
+                  <li class="meter">
+                    <span aria-hidden="true" class="ab">{item.ab}</span>
+                    <span class="flex min-w-0 flex-col gap-1">
+                      <span class="text-sm leading-tight font-medium">{item.name}</span>
+                      <span aria-hidden="true" class="bar">
+                        <span style={`width: ${Math.round((item.count / stack.repos) * 100)}%`} />
+                      </span>
+                    </span>
+                    <span class="mono text-fg-3">{item.count} / {stack.repos}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mono m-0 leading-[1.7] text-fg-3">
+        {t('home.stackNote')}
+        {!stack.generated && ` · ${t('home.stackSample')}`}
+      </p>
+    </div>
+  </section>
+
+  <section id="blog" class="border-b border-rule">
+    <div class="wrap flex flex-col gap-7 pt-14 pb-16">
+      <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h2 class="h2 numbered m-0"><span class="num">03</span>{t('home.latest')}</h2>
+        <a href={localeHref(locale, '/blog/')} class="mono underline-link text-fg-2">{t('home.allPosts')}</a>
+      </div>
+      {
+        posts.length > 0 ? (
+          <ol class="postlist">
+            {posts.map((post) => (
+              <PostRow post={post} locale={locale} tags={2} />
+            ))}
+          </ol>
+        ) : (
+          <p class="m-0 text-fg-2">{t('blog.empty')}</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="now" class="border-b border-rule">
+    <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-10 pt-14 pb-16">
+      <div class="flex flex-col gap-3">
+        <h2 class="h2 numbered m-0"><span class="num">04</span>{t('home.now')}</h2>
+        <p class="label m-0">UPDATED {dot(now.updated)}</p>
+        <p class="m-0 max-w-[28em] text-sm text-fg-2">{t('home.nowNote')}</p>
+      </div>
+      <dl class="kv-plain text-[15px] md:col-span-2">
+        {
+          now.items[locale].map((item) => (
+            <>
+              <dt class="label">{item.key}</dt>
+              <dd>{item.value}</dd>
+            </>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,97 @@
+---
+import AdSlot from '@/components/AdSlot.astro';
+import PostRow from '@/components/PostRow.astro';
+import Tag from '@/components/Tag.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localeHref, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { chunk, collectTags, relatedTags, type Post } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  tag: string;
+  /** Posts carrying this tag. */
+  posts: Post[];
+  /** Every post in this locale, for the other/related tag lists. */
+  allPosts: Post[];
+}
+
+const { locale, tag, posts, allPosts } = Astro.props;
+const t = useTranslations(locale);
+const others = collectTags(allPosts)
+  .filter((entry) => entry.tag !== tag)
+  .slice(0, 6);
+const related = relatedTags(tag, allPosts);
+const chunks = chunk(posts, 6);
+const path = `/tags/${encodeURIComponent(tag)}/`;
+const blogHref = localeHref(locale, '/blog/');
+---
+
+<BaseLayout
+  title={`#${tag}`}
+  description={t('blog.description')}
+  alternates={{ ja: localeHref('ja', path), en: localeHref('en', path) }}
+>
+  <section class="border-b border-rule">
+    <div class="wrap flex flex-col gap-4 pt-14 pb-8">
+      <p class="mono m-0 flex gap-2.5 text-fg-3">
+        <a href={blogHref} class="hover:text-fg">BLOG</a>
+        <span aria-hidden="true">/</span>
+        <span>TAGS</span>
+      </p>
+      <h1 class="h1 m-0 flex flex-wrap items-baseline gap-3.5">
+        <span class="text-accent-ink">#</span>{tag}
+        <span class="mono text-[13px] font-normal text-fg-3">{posts.length} POSTS</span>
+      </h1>
+      {
+        others.length > 0 && (
+          <div class="mt-2 flex flex-wrap items-center gap-1.5">
+            <span class="label mr-2">OTHER TAGS</span>
+            {others.map((entry) => (
+              <Tag tag={entry.tag} count={entry.count} locale={locale} />
+            ))}
+            <Tag tag={t('blog.allTags')} locale={locale} href={blogHref} />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap main-side pt-10 pb-[72px]">
+      <div class="flex min-w-0 flex-col gap-10">
+        {
+          chunks.map((group, index) => (
+            <>
+              <ol class="postlist">
+                {group.map((post) => (
+                  <PostRow post={post} locale={locale} tags={0} />
+                ))}
+              </ol>
+              {index < chunks.length - 1 && index < 4 && <AdSlot variant="list" />}
+            </>
+          ))
+        }
+      </div>
+      <aside class="flex flex-col gap-8">
+        {
+          related.length > 0 && (
+            <div class="flex flex-col gap-2.5">
+              <h2 class="label m-0">RELATED TAGS</h2>
+              <ul class="list-rule">
+                {related.map((entry) => (
+                  <li>
+                    <a href={localeHref(locale, `/tags/${encodeURIComponent(entry.tag)}/`)}>
+                      <span>#{entry.tag}</span>
+                      <span class="n">{entry.count}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

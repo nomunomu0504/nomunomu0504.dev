@@ -1,0 +1,176 @@
+---
+import { render } from 'astro:content';
+import AdSlot from '@/components/AdSlot.astro';
+import ArticleBody from '@/components/ArticleBody.astro';
+import AuthorCard from '@/components/AuthorCard.astro';
+import CodeCopy from '@/components/CodeCopy.astro';
+import Comments from '@/components/Comments.astro';
+import PostRow from '@/components/PostRow.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import Tag from '@/components/Tag.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localeHref, otherLocale, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import {
+  formatDate,
+  getPosts,
+  getTranslation,
+  readingTime,
+  relatedPosts,
+  slugOf,
+  type Post,
+} from '@/lib/content';
+import { site } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+  post: Post;
+}
+
+const { locale, post } = Astro.props;
+const t = useTranslations(locale);
+const { Content, headings } = await render(post);
+const slug = slugOf(post);
+
+const all = await getPosts(locale);
+const index = all.findIndex((entry) => entry.id === post.id);
+const newer = index > 0 ? all[index - 1] : undefined;
+const older = index >= 0 && index < all.length - 1 ? all[index + 1] : undefined;
+const related = relatedPosts(post, all);
+
+const other = otherLocale(locale);
+const translation = await getTranslation('blog', other, slug);
+const alternates: Partial<Record<Locale, string>> = { [locale]: localeHref(locale, `/blog/${slug}/`) };
+if (translation) alternates[other] = localeHref(other, `/blog/${slug}/`);
+
+const minutes = readingTime(post.body, locale);
+const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const primaryTag = post.data.tags[0];
+const blogHref = localeHref(locale, '/blog/');
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  alternates={alternates}
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.updatedDate}
+>
+  <article data-pagefind-body>
+    <header class="border-b border-rule">
+      <div class="wrap flex flex-col gap-5 pt-14 pb-10">
+        <p class="mono m-0 flex gap-2.5 text-fg-3" data-pagefind-ignore>
+          <a href={blogHref} class="hover:text-fg">BLOG</a>
+          {
+            primaryTag && (
+              <>
+                <span aria-hidden="true">/</span>
+                <a href={localeHref(locale, `/tags/${encodeURIComponent(primaryTag)}/`)} class="text-accent-ink">
+                  #{primaryTag.toUpperCase()}
+                </a>
+              </>
+            )
+          }
+        </p>
+        <h1 class="h1 m-0 max-w-[20em] text-balance">{post.data.title}</h1>
+        <div class="mono flex flex-wrap items-center gap-5" data-pagefind-ignore>
+          <span class="flex items-center gap-2 text-fg-2">
+            <span aria-hidden="true" class="inline-block size-6 rounded-full bg-bg-3"></span>
+            {site.name}
+          </span>
+          <time datetime={post.data.pubDate.toISOString()} class="text-fg-3">{formatDate(post.data.pubDate)}</time>
+          {
+            post.data.updatedDate && (
+              <span class="text-fg-3">
+                UPDATED <time datetime={post.data.updatedDate.toISOString()}>{formatDate(post.data.updatedDate)}</time>
+              </span>
+            )
+          }
+          <span class="text-fg-3">{t('blog.minRead', { min: minutes })}</span>
+          {
+            post.data.tags.length > 0 && (
+              <span class="flex flex-wrap gap-1.5">
+                {post.data.tags.map((tag) => (
+                  <Tag tag={tag} locale={locale} />
+                ))}
+              </span>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap pt-7">
+      <AdSlot variant="leaderboard" />
+    </div>
+
+    <div class="wrap main-side pt-9 pb-16">
+      <div class="flex min-w-0 flex-col gap-8">
+        {
+          toc.length > 0 && (
+            <details class="toc-m only-m" open data-pagefind-ignore>
+              <summary>
+                {t('blog.toc')}
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </summary>
+              <TableOfContents headings={toc} locale={locale} />
+            </details>
+          )
+        }
+
+        <ArticleBody>
+          <Content />
+          <AdSlot slot="ad" variant="in-article" class="my-10" />
+        </ArticleBody>
+
+        <AdSlot variant="rectangle" />
+
+        {
+          (older || newer) && (
+            <nav
+              aria-label={t('blog.postNav')}
+              class="grid max-w-[var(--w-prose)] grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-px border border-rule bg-rule"
+              data-pagefind-ignore
+            >
+              {older && (
+                <a href={localeHref(locale, `/blog/${slugOf(older)}/`)} class="cell flex flex-col gap-1.5 px-5 py-[18px]">
+                  <span class="label">← PREV</span>
+                  <span class="text-[15px] leading-normal font-medium">{older.data.title}</span>
+                </a>
+              )}
+              {newer && (
+                <a href={localeHref(locale, `/blog/${slugOf(newer)}/`)} class="cell flex flex-col gap-1.5 px-5 py-[18px] text-right">
+                  <span class="label">NEXT →</span>
+                  <span class="text-[15px] leading-normal font-medium">{newer.data.title}</span>
+                </a>
+              )}
+            </nav>
+          )
+        }
+
+        {
+          related.length > 0 && (
+            <section aria-labelledby="related-heading" class="flex max-w-[var(--w-prose)] flex-col gap-3" data-pagefind-ignore>
+              <h2 id="related-heading" class="label m-0">RELATED</h2>
+              <ol class="postlist">
+                {related.map((entry) => (
+                  <PostRow post={entry} locale={locale} tags={0} />
+                ))}
+              </ol>
+            </section>
+          )
+        }
+
+        <AuthorCard locale={locale} />
+        <Comments locale={locale} />
+      </div>
+
+      <aside class="only-d sticky top-6 flex flex-col gap-8" data-pagefind-ignore>
+        <TableOfContents headings={toc} locale={locale} label />
+        <AdSlot variant="skyscraper" class="only-lg" />
+      </aside>
+    </div>
+  </article>
+  <CodeCopy locale={locale} />
+</BaseLayout>

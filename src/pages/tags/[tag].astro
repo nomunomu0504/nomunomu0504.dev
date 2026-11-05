@@ -1,0 +1,18 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import TagView from '@/views/TagView.astro';
+import { collectTags, getPosts } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const allPosts = await getPosts('ja');
+  return collectTags(allPosts).map(({ tag }) => ({
+    params: { tag },
+    props: { tag, posts: allPosts.filter((post) => post.data.tags.includes(tag)), allPosts },
+  }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { tag, posts, allPosts } = Astro.props as Props;
+---
+
+<TagView locale="ja" tag={tag} posts={posts} allPosts={allPosts} />

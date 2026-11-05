@@ -1,0 +1,66 @@
+---
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+  /** `icon`: header button (moon/sun). `toggle`: LIGHT ○ DARK switch for the mobile menu. */
+  variant?: 'icon' | 'toggle';
+}
+
+const { locale, variant = 'icon' } = Astro.props;
+const t = useTranslations(locale);
+---
+
+{
+  variant === 'icon' ? (
+    <button
+      type="button"
+      class="iconbtn"
+      data-theme-toggle
+      aria-label={t('theme.toDark')}
+      data-label-dark={t('theme.toDark')}
+      data-label-light={t('theme.toLight')}
+    >
+      <svg class="dark:hidden" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+      <svg class="hidden dark:block" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+    </button>
+  ) : (
+    <button type="button" class="toggle" data-theme-toggle aria-pressed="false" aria-label={t('theme.toDark')}>
+      <span>LIGHT</span>
+      <i aria-hidden="true"></i>
+      <span>DARK</span>
+    </button>
+  )
+}
+
+<script>
+  type Theme = 'light' | 'dark';
+  const toggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+
+  function sync() {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    toggles.forEach((button) => {
+      button.setAttribute('aria-pressed', String(dark));
+      const label = dark ? button.dataset.labelLight : button.dataset.labelDark;
+      if (label) button.setAttribute('aria-label', label);
+    });
+  }
+
+  function apply(theme: Theme) {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      // Storage may be unavailable (private mode); the theme still applies for this page.
+    }
+    sync();
+  }
+
+  toggles.forEach((button) => {
+    button.addEventListener('click', () => {
+      apply(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  });
+  sync();
+</script>

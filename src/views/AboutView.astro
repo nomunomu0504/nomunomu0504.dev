@@ -1,0 +1,147 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { site } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+// TODO: fill in the [YEAR] placeholders, the public email, and the company site URL.
+const copy = {
+  ja: {
+    heading: site.nameJa,
+    sub: site.name,
+    intro:
+      '株式会社みらいスタジオ 取締役 CTO。受託・自社開発のチームを率いながら、個人事業としてスタートアップの開発支援もしています。モバイルからインフラまで、動くものを最後まで自分で面倒を見るのが好きです。',
+    timeline: [
+      { period: '[YEAR] —', title: '株式会社みらいスタジオ — 取締役 CTO', body: 'エンジニアチームの技術方針、受託・自社開発の両立、採用。並行して個人事業として他社スタートアップの開発支援。' },
+      { period: '[YEAR]', title: 'みらいスタジオ — テックリード', body: 'エンジニアチームを率い、Flutter と AWS（CDK / ECS / Lambda）を軸にした標準構成を整備。' },
+      { period: '[YEAR]', title: 'みらいスタジオ — シニアエンジニア / スタジオディレクター', body: '受託案件の設計・実装と、スタジオ運営。' },
+      { period: '[YEAR]', title: '地元の IT 企業 — 開発', body: '受託開発案件に従事。Web とモバイルの両方。' },
+      { period: '[YEAR]', title: '福井工業高等専門学校 専攻科 卒業', body: '在学中から高専キャリアの活動に参加。学生向けイベントの運営と技術担当。' },
+    ],
+    skills: [
+      { label: 'MOBILE', body: 'Flutter / Dart を中心に iOS・Android。リリース運用、ストア審査、CI まで。', tags: ['Flutter', 'Dart', 'Riverpod', 'Swift'] },
+      { label: 'CLOUD', body: 'AWS を CDK でコード化。ECS / Lambda / RDS を中心に、コストと運用のバランスを取る設計。', tags: ['AWS', 'CDK', 'ECS', 'Lambda', 'Cloudflare'] },
+      { label: 'DATA', body: 'PostgreSQL。スキーマ設計、レプリケーション、PostGIS。', tags: ['PostgreSQL', 'PostGIS', 'Neon'] },
+      { label: 'INFRA / OPS', body: 'Docker、CI/CD、自宅の Proxmox クラスタ。壊して直すのが一番の学習。', tags: ['Docker', 'GitHub Actions', 'Proxmox', 'LXC', 'Tailscale'] },
+      { label: 'LANGUAGES', body: '仕事で書く順。', tags: ['Dart', 'TypeScript', 'Rust', 'Go', 'Python'] },
+      { label: 'OTHER', body: '技術選定、チーム立ち上げ、採用面接、学生向けイベントの運営。', tags: ['Tech lead', 'Hiring', 'KOSEN Career'] },
+    ],
+    contactNote: '技術顧問、設計相談、OSS、登壇など。返信は数日以内に。',
+    xNote: 'DM 開放中',
+    companyNote: '会社宛ての相談は',
+    companyLink: '会社サイト',
+    companyTail: 'から',
+  },
+  en: {
+    heading: site.name,
+    sub: site.nameJa,
+    intro:
+      'CTO and board member at Mirai Studio Inc. I lead the client-work and in-house product teams, and support startups as an independent engineer on the side. I like owning things end to end, from mobile apps down to the infrastructure they run on.',
+    timeline: [
+      { period: '[YEAR] —', title: 'Mirai Studio Inc. — CTO, Board Member', body: 'Technical direction for the engineering team, balancing client work with in-house products, hiring. Independent development support for other startups in parallel.' },
+      { period: '[YEAR]', title: 'Mirai Studio — Tech Lead', body: 'Led the engineering team and established a standard stack around Flutter and AWS (CDK / ECS / Lambda).' },
+      { period: '[YEAR]', title: 'Mirai Studio — Senior Engineer / Studio Director', body: 'Design and implementation of client projects, plus studio operations.' },
+      { period: '[YEAR]', title: 'Local IT company — Developer', body: 'Client projects across web and mobile.' },
+      { period: '[YEAR]', title: 'National Institute of Technology, Fukui College — Advanced Course', body: 'Joined KOSEN Career activities as a student, running and supporting events for students.' },
+    ],
+    skills: [
+      { label: 'MOBILE', body: 'iOS and Android with Flutter / Dart, from release operations and store review to CI.', tags: ['Flutter', 'Dart', 'Riverpod', 'Swift'] },
+      { label: 'CLOUD', body: 'AWS as code with CDK. ECS / Lambda / RDS designs that balance cost and operations.', tags: ['AWS', 'CDK', 'ECS', 'Lambda', 'Cloudflare'] },
+      { label: 'DATA', body: 'PostgreSQL: schema design, replication, PostGIS.', tags: ['PostgreSQL', 'PostGIS', 'Neon'] },
+      { label: 'INFRA / OPS', body: 'Docker, CI/CD, and a Proxmox cluster at home. Breaking and fixing things is how I learn.', tags: ['Docker', 'GitHub Actions', 'Proxmox', 'LXC', 'Tailscale'] },
+      { label: 'LANGUAGES', body: 'In order of how much I write at work.', tags: ['Dart', 'TypeScript', 'Rust', 'Go', 'Python'] },
+      { label: 'OTHER', body: 'Technology selection, team building, hiring interviews, student events.', tags: ['Tech lead', 'Hiring', 'KOSEN Career'] },
+    ],
+    contactNote: 'Advisory, architecture reviews, open source, speaking. I reply within a few days.',
+    xNote: 'DMs open',
+    companyNote: 'For company matters, use the',
+    companyLink: 'company site',
+    companyTail: '',
+  },
+} satisfies Record<Locale, unknown>;
+const c = copy[locale];
+---
+
+<BaseLayout title={t('about.title')} description={site.description[locale]}>
+  <section class="border-b border-rule">
+    <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-end gap-12 pt-14 pb-12">
+      <div class="flex flex-col gap-3.5">
+        <p class="label m-0">ABOUT</p>
+        <h1 class="h1 m-0">
+          {c.heading}
+          <span class="mono ml-4 text-sm font-normal text-fg-3">{c.sub}</span>
+        </h1>
+        <p class="m-0 max-w-[36em] text-base text-pretty text-fg-2">{c.intro}</p>
+      </div>
+      <div class="ph aspect-[4/3] w-full max-w-[360px] justify-self-end bg-bg-2" aria-hidden="true">[photo]</div>
+    </div>
+  </section>
+
+  <section class="border-b border-rule">
+    <div class="wrap flex flex-col gap-6 pt-14 pb-16">
+      <h2 class="h2 numbered m-0"><span class="num">01</span>{t('about.timeline')}</h2>
+      <ol class="timeline">
+        {
+          c.timeline.map((item) => (
+            <li>
+              <span class="yr">{item.period}</span>
+              <span class="ev">
+                <b>{item.title}</b>
+                <span>{item.body}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="border-b border-rule">
+    <div class="wrap flex flex-col gap-6 pt-14 pb-16">
+      <h2 class="h2 numbered m-0"><span class="num">02</span>{t('about.skills')}</h2>
+      <div class="skills">
+        {
+          c.skills.map((skill) => (
+            <div class="cell flex flex-col gap-3 px-6 py-[22px]">
+              <h3 class="label m-0">{skill.label}</h3>
+              <p class="m-0 text-[15px] leading-[1.7]">{skill.body}</p>
+              <div class="flex flex-wrap gap-1.5">
+                {skill.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-10 pt-14 pb-[72px]">
+      <div class="flex flex-col gap-3">
+        <h2 class="h2 numbered m-0"><span class="num">03</span>{t('about.contact')}</h2>
+        <p class="m-0 max-w-[28em] text-sm text-fg-2">{c.contactNote}</p>
+      </div>
+      <dl class="kv-plain mono text-sm md:col-span-2">
+        <dt class="label">EMAIL</dt>
+        <dd><a href="#" class="ink-link">[公開用メールアドレス]</a></dd>
+        <dt class="label">X</dt>
+        <dd><a href={site.social.x} rel="me noopener" class="underline-link">@{site.handle}</a> — {c.xNote}</dd>
+        <dt class="label">GITHUB</dt>
+        <dd><a href={site.social.github} rel="me noopener" class="underline-link">github.com/{site.handle}</a></dd>
+        <dt class="label">LAPRAS</dt>
+        <dd><a href={site.social.lapras} rel="me noopener" class="underline-link">lapras.com/public/{site.handle}</a></dd>
+        <dt class="label">COMPANY</dt>
+        <dd>株式会社みらいスタジオ — {c.companyNote} <a href="#" class="underline-link">{c.companyLink}</a> {c.companyTail}</dd>
+      </dl>
+    </div>
+  </section>
+</BaseLayout>

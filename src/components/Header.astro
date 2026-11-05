@@ -1,0 +1,96 @@
+---
+import LocaleSwitcher from '@/components/LocaleSwitcher.astro';
+import ThemeToggle from '@/components/ThemeToggle.astro';
+import { localeHref, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { getPosts, getWorks } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+  alternates: Partial<Record<Locale, string>>;
+}
+
+const { locale, alternates } = Astro.props;
+const t = useTranslations(locale);
+const [posts, works] = await Promise.all([getPosts(locale), getWorks(locale)]);
+const nav = [
+  { href: localeHref(locale, '/works/'), label: t('nav.works'), count: works.length },
+  { href: localeHref(locale, '/blog/'), label: t('nav.blog'), count: posts.length },
+  { href: localeHref(locale, '/about/'), label: t('nav.about'), count: undefined },
+];
+const current = Astro.url.pathname;
+const isCurrent = (href: string) => current === href || current.startsWith(href);
+const brand = Astro.site?.host ?? 'nomunomu0504.dev';
+---
+
+<header class="border-b border-rule">
+  <div class="wrap flex h-14 items-center justify-between gap-4">
+    <a href={localeHref(locale, '/')} class="mono flex items-center gap-2.5 font-medium text-fg">
+      <span aria-hidden="true" class="inline-block size-2 rounded-full bg-accent"></span>
+      {brand}
+    </a>
+    <nav aria-label={t('nav.main')} class="hidden items-center gap-7 md:flex">
+      {
+        nav.map((item) => (
+          <a href={item.href} class="navlink" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="flex items-center gap-2">
+      <LocaleSwitcher locale={locale} alternates={alternates} />
+      <ThemeToggle locale={locale} variant="icon" />
+      <button
+        type="button"
+        class="iconbtn md:hidden"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t('nav.openMenu')}
+        data-label-open={t('nav.openMenu')}
+        data-label-close={t('nav.closeMenu')}
+      >
+        <svg data-icon="open" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        <svg data-icon="close" aria-hidden="true" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile: the menu expands below the header instead of overlaying the page. -->
+  <nav id="mobile-menu" aria-label={t('nav.main')} class="flex flex-col border-t border-rule md:hidden" hidden>
+    {
+      nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'flex items-center justify-between border-b border-rule px-5 py-4 text-base font-medium',
+            isCurrent(item.href) && 'text-accent-ink',
+          ]}
+          aria-current={isCurrent(item.href) ? 'page' : undefined}
+        >
+          <span>{item.label}</span>
+          {item.count !== undefined && <span class="mono text-fg-3">{item.count}</span>}
+        </a>
+      ))
+    }
+    <div class="flex items-center justify-between px-5 py-3.5">
+      <span class="label">THEME</span>
+      <ThemeToggle locale={locale} variant="toggle" />
+    </div>
+  </nav>
+</header>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.getElementById('mobile-menu');
+  if (button && menu) {
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!open));
+      button.setAttribute('aria-label', (open ? button.dataset.labelOpen : button.dataset.labelClose) ?? '');
+      menu.hidden = open;
+      button.querySelector('[data-icon="open"]')?.classList.toggle('hidden', !open);
+      button.querySelector('[data-icon="close"]')?.classList.toggle('hidden', open);
+    });
+  }
+</script>

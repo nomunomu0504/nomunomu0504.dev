@@ -1,0 +1,21 @@
+---
+import { localeHref, type Locale } from '@/i18n/config';
+
+interface Props {
+  tag: string;
+  locale: Locale;
+  count?: number;
+  /** Selected state (filled). */
+  on?: boolean;
+  /** Override the link target; defaults to the tag page. */
+  href?: string;
+}
+
+const { tag, locale, count, on = false } = Astro.props;
+const href = Astro.props.href ?? localeHref(locale, `/tags/${encodeURIComponent(tag)}/`);
+---
+
+<a href={href} class:list={['tag', on && 'on']} aria-current={on ? 'true' : undefined}>
+  {tag}
+  {count !== undefined && <span class="n">{count}</span>}
+</a>

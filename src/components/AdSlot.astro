@@ -1,0 +1,48 @@
+---
+/**
+ * Reserved AdSense slot (Ledger "AdSlot"). A labelled, fixed-height dashed frame so the layout
+ * never shifts whether the ad loads, is blocked, or is withheld before consent. The <ins> is only
+ * emitted when both the publisher ID and this slot's unit ID are configured; BaseLayout pushes it
+ * to AdSense after the visitor accepts cookies.
+ */
+import { resolveLocale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+type Variant = 'leaderboard' | 'in-article' | 'rectangle' | 'skyscraper' | 'list';
+
+interface Props {
+  variant: Variant;
+  class?: string;
+}
+
+const { variant, class: className } = Astro.props;
+const t = useTranslations(resolveLocale(Astro.currentLocale));
+
+const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+const slotIds: Record<Variant, string | undefined> = {
+  leaderboard: import.meta.env.PUBLIC_ADSENSE_SLOT_LEADERBOARD,
+  'in-article': import.meta.env.PUBLIC_ADSENSE_SLOT_IN_ARTICLE,
+  rectangle: import.meta.env.PUBLIC_ADSENSE_SLOT_RECTANGLE,
+  skyscraper: import.meta.env.PUBLIC_ADSENSE_SLOT_SKYSCRAPER,
+  list: import.meta.env.PUBLIC_ADSENSE_SLOT_LIST,
+};
+const slotId = slotIds[variant];
+const live = Boolean(client && slotId);
+const format =
+  variant === 'in-article'
+    ? { 'data-ad-format': 'fluid', 'data-ad-layout': 'in-article' }
+    : { 'data-ad-format': 'auto', 'data-full-width-responsive': 'false' };
+---
+
+<aside
+  class:list={['ad', `ad-${variant}`, className]}
+  aria-label={t('ad.label')}
+  data-ad-variant={variant}
+  data-nosnippet
+  data-pagefind-ignore
+>
+  <span class="ad-label">{t('ad.label')}</span>
+  <div class="ad-box">
+    {live && <ins class="adsbygoogle" data-ad-client={client} data-ad-slot={slotId} {...format} />}
+  </div>
+</aside>

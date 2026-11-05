@@ -1,0 +1,56 @@
+---
+import type { MarkdownHeading } from 'astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+interface Props {
+  headings: MarkdownHeading[];
+  locale: Locale;
+  /** Show the "ON THIS PAGE" label above the list. */
+  label?: boolean;
+}
+
+const { headings, locale, label = false } = Astro.props;
+const t = useTranslations(locale);
+---
+
+{
+  headings.length > 0 && (
+    <nav class="toc" aria-label={t('blog.toc')} data-toc>
+      {label && <p class="label m-0 mb-2.5">ON THIS PAGE</p>}
+      <ol>
+        {headings.map((heading) => (
+          <li class:list={[heading.depth >= 3 && 'l3']}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<script>
+  // Highlight the heading currently in view.
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc] a[href^="#"]'));
+  if (links.length > 0 && 'IntersectionObserver' in window) {
+    const targets = links
+      .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+      .filter((el): el is HTMLElement => el !== null);
+    const setCurrent = (id: string) => {
+      links.forEach((link) => {
+        const match = decodeURIComponent(link.hash.slice(1)) === id;
+        if (match) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setCurrent(visible[0].target.id);
+      },
+      { rootMargin: '0px 0px -70% 0px', threshold: 0 },
+    );
+    targets.forEach((target) => observer.observe(target));
+    if (targets[0]) setCurrent(targets[0].id);
+  }
+</script>

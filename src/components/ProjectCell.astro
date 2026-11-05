@@ -1,0 +1,58 @@
+---
+/** Ledger "ProjectCell": meta line / status / thumbnail / name / blurb / stack. Place inside <div class="two">. */
+import { Image } from 'astro:assets';
+import { localeHref, type Locale } from '@/i18n/config';
+import { slugOf, type Work } from '@/lib/content';
+
+interface Props {
+  work: Work;
+  locale: Locale;
+  /** Draw a dashed placeholder when the project has no cover image. */
+  placeholder?: boolean;
+}
+
+const { work, locale, placeholder = false } = Astro.props;
+const href = localeHref(locale, `/works/${slugOf(work)}/`);
+const meta = [work.data.type.toUpperCase(), work.data.kind?.toUpperCase()].filter(Boolean).join(' · ');
+const hasVisual = Boolean(work.data.cover) || placeholder;
+---
+
+<a href={href} class:list={['cell flex flex-col gap-[18px] p-6', hasVisual ? 'min-h-[340px]' : 'min-h-[240px]']} data-type={work.data.type}>
+  <div class="mono flex justify-between gap-3 text-fg-3">
+    <span>{meta}</span>
+    {
+      work.data.status && (
+        <span class:list={[work.data.active && 'text-accent-ink']}>
+          {work.data.active && '● '}
+          {work.data.status}
+        </span>
+      )
+    }
+  </div>
+  {
+    work.data.cover ? (
+      <div class="shot">
+        <Image src={work.data.cover} alt={work.data.coverAlt ?? ''} widths={[480, 960]} sizes="(min-width: 768px) 560px, 100vw" />
+      </div>
+    ) : (
+      placeholder && (
+        <div class="ph aspect-[16/10]" aria-hidden="true">
+          [screenshot]
+        </div>
+      )
+    )
+  }
+  <div class:list={['flex flex-col gap-1.5', !hasVisual && 'mt-auto']}>
+    <h3 class="h3 m-0">{work.data.title}</h3>
+    <p class="m-0 text-sm leading-[1.7] text-fg-2">{work.data.description}</p>
+  </div>
+  {
+    work.data.stack.length > 0 && (
+      <div class:list={['flex flex-wrap gap-1.5', hasVisual && 'mt-auto']}>
+        {work.data.stack.map((item) => (
+          <span class="tag">{item}</span>
+        ))}
+      </div>
+    )
+  }
+</a>

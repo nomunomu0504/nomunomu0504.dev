@@ -1,0 +1,33 @@
+---
+import { localeHref, type Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { site } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const year = new Date().getFullYear();
+const links = [
+  { href: localeHref(locale, '/blog/'), label: t('nav.blog') },
+  { href: localeHref(locale, '/works/'), label: t('nav.works') },
+  { href: localeHref(locale, '/about/'), label: t('nav.about') },
+  { href: localeHref(locale, '/privacy/'), label: t('footer.privacy') },
+  { href: localeHref(locale, '/rss.xml'), label: t('footer.rss') },
+];
+---
+
+<footer class="mt-auto border-t border-rule">
+  <div class="wrap flex flex-wrap items-center justify-between gap-5 pt-8 pb-10">
+    <p class="mono m-0 text-fg-3">© {year} {site.name}</p>
+    <nav aria-label={t('footer.nav')} class="mono flex flex-wrap items-center gap-6 text-fg-2">
+      {links.map((link) => <a href={link.href} class="hover:text-fg">{link.label}</a>)}
+      <button type="button" class="mono cursor-pointer border-0 bg-transparent p-0 text-fg-2 hover:text-fg" data-cookie-settings>
+        {t('footer.cookie')}
+      </button>
+    </nav>
+    <p class="mono m-0 text-fg-3">Astro · Tailwind · Cloudflare</p>
+  </div>
+</footer>

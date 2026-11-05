@@ -1,0 +1,94 @@
+---
+import AdSlot from '@/components/AdSlot.astro';
+import ProjectCell from '@/components/ProjectCell.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { chunk, countByType, getWorks } from '@/lib/content';
+import { workTypes } from '@/lib/work-types';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const works = await getWorks(locale);
+const types = countByType(works);
+const chunks = chunk(works, 6);
+---
+
+<BaseLayout title={t('works.title')} description={t('works.description')}>
+  <section class="border-b border-rule">
+    <div class="wrap flex flex-col gap-6 pt-14 pb-8">
+      <div class="flex flex-col gap-2">
+        <p class="label m-0">WORKS · {works.length} PROJECTS</p>
+        <h1 class="h1 m-0">{t('works.title')}</h1>
+        <p class="m-0 max-w-[36em] text-[15px] text-fg-2">{t('works.description')}</p>
+      </div>
+      {
+        types.size > 1 && (
+          <div class="flex flex-wrap items-center gap-1.5" data-type-filter>
+            <span class="label mr-2">TYPE</span>
+            <button type="button" class="tag on" data-type="all" aria-pressed="true">
+              {t('blog.all')}
+            </button>
+            {workTypes
+              .filter((type) => types.has(type))
+              .map((type) => (
+                <button type="button" class="tag" data-type={type} aria-pressed="false">
+                  {t(`works.type.${type}`)}
+                  <span class="n">{types.get(type)}</span>
+                </button>
+              ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap flex flex-col gap-10 pt-10 pb-[72px]" data-type-grid>
+      {works.length === 0 && <p class="m-0 text-fg-2">{t('works.empty')}</p>}
+      {
+        chunks.map((group, index) => (
+          <>
+            <div class="two">
+              {group.map((work) => (
+                <ProjectCell work={work} locale={locale} placeholder />
+              ))}
+            </div>
+            {index < chunks.length - 1 && index < 4 && <AdSlot variant="leaderboard" />}
+          </>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Client-side TYPE filter: toggles cells by data-type and hides emptied groups.
+  const filter = document.querySelector<HTMLElement>('[data-type-filter]');
+  const grid = document.querySelector<HTMLElement>('[data-type-grid]');
+  if (filter && grid) {
+    const buttons = Array.from(filter.querySelectorAll<HTMLButtonElement>('button[data-type]'));
+    const cells = Array.from(grid.querySelectorAll<HTMLElement>('a[data-type]'));
+    const groups = Array.from(grid.querySelectorAll<HTMLElement>('.two'));
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const type = button.dataset.type ?? 'all';
+        buttons.forEach((b) => {
+          const on = b === button;
+          b.classList.toggle('on', on);
+          b.setAttribute('aria-pressed', String(on));
+        });
+        cells.forEach((cell) => {
+          cell.hidden = type !== 'all' && cell.dataset.type !== type;
+        });
+        groups.forEach((group) => {
+          group.hidden = Array.from(group.children).every((child) => (child as HTMLElement).hidden);
+        });
+      });
+    });
+  }
+</script>
