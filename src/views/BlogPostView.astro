@@ -20,6 +20,7 @@ import {
   slugOf,
   type Post,
 } from '@/lib/content';
+import { ogImagePath } from '@/lib/og';
 import { site } from '@/lib/site';
 
 interface Props {
@@ -52,6 +53,7 @@ const blogHref = localeHref(locale, '/blog/');
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
+  ogImage={ogImagePath(locale, 'blog', slug)}
   type="article"
   alternates={alternates}
   publishedTime={post.data.pubDate}

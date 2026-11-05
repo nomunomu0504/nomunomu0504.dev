@@ -12,6 +12,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "deploy": "bun run build && wrangler deploy",
+    "stack": "bun scripts/stack.ts",
+    "new:post": "bun scripts/new.ts post",
+    "new:work": "bun scripts/new.ts work",
     "astro": "astro"
   },
   "dependencies": {
@@ -27,7 +30,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@fontsource/geist": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
     "pagefind": "^1.6.0",
+    "satori": "^0.63.2",
     "typescript": "^6.0.3",
     "wrangler": "^4.158.0"
   },

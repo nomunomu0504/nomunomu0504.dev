@@ -22,6 +22,11 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      # Refresh the Home "Stack" data; falls back to the committed file if GitHub is unreachable.
+      - run: bun run stack || echo "stack: using committed data"
+        env:
+          # STACK_GITHUB_TOKEN (optional PAT) lets the scan read private or org repositories.
+          GITHUB_TOKEN: ${{ secrets.STACK_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
       - run: bun run build
         env:
           SITE_URL: ${{ vars.SITE_URL }}

@@ -7,6 +7,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { localeHref, otherLocale, type Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
 import { getTranslation, getWorks, slugOf, type Work } from '@/lib/content';
+import { ogImagePath } from '@/lib/og';
 
 interface Props {
   locale: Locale;
@@ -49,7 +50,12 @@ const shots = work.data.screenshots.length > 0
     : [];
 ---
 
-<BaseLayout title={work.data.title} description={work.data.description} alternates={alternates}>
+<BaseLayout
+  title={work.data.title}
+  description={work.data.description}
+  ogImage={ogImagePath(locale, 'works', slug)}
+  alternates={alternates}
+>
   <article data-pagefind-body>
     <header class="border-b border-rule">
       <div class="wrap flex flex-col gap-5 pt-14 pb-10">

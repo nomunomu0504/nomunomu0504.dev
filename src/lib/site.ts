@@ -25,5 +25,5 @@ export const site = {
     zenn: 'https://zenn.dev/nomunomu0504',
     lapras: 'https://lapras.com/public/nomunomu0504',
   },
-  ogImage: '/og-default.png',
+  ogImage: '/og/default.png',
 } as const;

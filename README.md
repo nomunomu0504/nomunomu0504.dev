@@ -20,6 +20,9 @@ Personal portfolio and blog. Static site built with Astro, served from Cloudflar
 | `bun run preview` | Preview the production build |
 | `bun run check` | Type-check Astro files |
 | `bun run deploy` | Build and deploy with wrangler (needs `wrangler login`) |
+| `bun run stack` | Regenerate `src/data/stack.ts` from public GitHub repos (uses `GITHUB_TOKEN` or `gh auth token`) |
+| `bun run new:post <slug>` | Scaffold a draft post (`--title`, `--tags a,b`, `--en` for the English twin) |
+| `bun run new:work <slug>` | Scaffold a project (`--title`, `--type oss\|app\|saas\|client\|infra`, `--en`) |
 
 ## Content
 
@@ -32,6 +35,12 @@ src/content/
 Japanese is the default locale (no URL prefix); English lives under `/en/`. A post is linked to its translation by sharing the same slug in both locale folders. Frontmatter schemas are in `src/content.config.ts`.
 
 Pages are thin wrappers around `src/views/*`, so each page body exists once and is rendered for both locales.
+
+## Scripts
+
+- `scripts/stack.ts` writes the Home "Stack" data by matching manifests and languages against `scripts/stack-rules.ts`. By default it scans the repositories linked from the Works entries (`links.github`) plus any listed in `repos` of `scripts/stack.config.ts` (`name` or `owner/name`; private ones need a token that can read them); with neither, it discovers the account's public, non-fork repositories pushed since `since`. `STACK_REPOS=a,b bun run stack` overrides the list for one run; `--dry-run` prints without writing. Things that live outside git (homelab) go in `manual`.
+- `scripts/new.ts` creates dated Markdown stubs under `src/content/`.
+- `scripts/og-fonts.py` vendors the fonts used by `src/lib/og.ts`, which renders Open Graph images at build time (`/og/<locale>/<blog|works>/<slug>.png` and `/og/default.png`).
 
 ## Ads
 
