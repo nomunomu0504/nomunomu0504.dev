@@ -844,7 +844,10 @@ pagefind-searchbox {
   display: block;
 }
 
-/* Filter chips rendered as buttons (Works · TYPE). */
-button.tag { cursor: pointer; background: transparent; }
-button.tag:hover { border-color: var(--fg); color: var(--fg); }
-button.tag.on:hover { background: var(--fg); color: var(--bg); }
+/* Filter chips rendered as buttons (Works · TYPE). Kept inside the components layer so the
+   unlayered reset here cannot outrank .tag.on. */
+@layer components {
+  button.tag { cursor: pointer; background: transparent; font-family: var(--ff-mono); font-size: 11px; }
+  button.tag:hover { border-color: var(--fg); color: var(--fg); }
+  button.tag.on, button.tag.on:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+}

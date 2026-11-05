@@ -6,7 +6,7 @@ export const stackConfig = {
    * Take repositories from the Works entries (links.github in src/content/works/<locale>/*.md),
    * so the Stack follows whatever is published as a project. Combined with `repos` below.
    */
-  reposFromWorks: true,
+  reposFromWorks: false,
   /**
    * Explicit repositories to scan: "name" for your own account, "owner/name" for others.
    * When this list plus the Works-derived list is non-empty, it is used as-is and the discovery
@@ -14,7 +14,13 @@ export const stackConfig = {
    * via `gh auth token`; in CI set the STACK_GITHUB_TOKEN secret to a PAT with repo read access).
    * Ad-hoc override without editing this file: STACK_REPOS=a,b,owner/c bun run stack
    */
-  repos: [] as string[],
+  repos: [
+    'sub-screen-player',
+    'forecall/forecall-cli',
+    'forecall/forecall-mcp',
+    'hidane-dev/hidane',
+    'hidane-dev/setup-hidane',
+  ] as string[],
 
   // ---- Discovery mode (only when `repos` is empty) ----------------------------------------
   /** Forks are skipped; they rarely reflect what you actually use. */
