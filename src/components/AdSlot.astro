@@ -4,6 +4,13 @@
  * never shifts whether the ad loads, is blocked, or is withheld before consent. The <ins> is only
  * emitted when both the publisher ID and this slot's unit ID are configured; BaseLayout pushes it
  * to AdSense after the visitor accepts cookies.
+ *
+ * Sizing: the AdSense units are created as "Responsive" display units, but the display variants
+ * carry no data-ad-format so AdSense requests exactly the size the <ins> has on the page
+ * (Google's approved "expandable width, fixed height" modification). The frame CSS in global.css
+ * gives the <ins> a 100% width and the variant's fixed height per breakpoint, so the ad can never
+ * outgrow the reserved frame. The in-article variant is a fluid native unit whose height AdSense
+ * decides, so it keeps its format parameters and the frame only reserves a minimum height.
  */
 import { resolveLocale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
@@ -29,9 +36,7 @@ const slotIds: Record<Variant, string | undefined> = {
 const slotId = slotIds[variant];
 const live = Boolean(client && slotId);
 const format =
-  variant === 'in-article'
-    ? { 'data-ad-format': 'fluid', 'data-ad-layout': 'in-article' }
-    : { 'data-ad-format': 'auto', 'data-full-width-responsive': 'false' };
+  variant === 'in-article' ? { 'data-ad-format': 'fluid', 'data-ad-layout': 'in-article' } : {};
 ---
 
 <aside

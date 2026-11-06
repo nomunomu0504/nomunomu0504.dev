@@ -618,7 +618,10 @@
     width: 100%;
     box-sizing: border-box;
     background: var(--ad-bg);
-    border: 1px dashed var(--ad-rule);
+    /* The dashed frame is an outline, not a border, so it takes no layout space and the <ins>
+       inside keeps the exact standard ad width (728, 336, 300) of its column. */
+    outline: 1px dashed var(--ad-rule);
+    outline-offset: 0;
     border-radius: 2px;
     display: flex;
     align-items: center;
@@ -628,20 +631,27 @@
     font-size: 11px;
     overflow: hidden;
   }
-  .ad-box > ins { display: block; width: 100%; }
-  .ad-leaderboard { max-width: 728px; }
-  .ad-leaderboard .ad-box { min-height: 90px; }
-  .ad-in-article .ad-box { min-height: 280px; }
-  .ad-rectangle { max-width: 336px; }
-  .ad-rectangle .ad-box { min-height: 280px; }
-  .ad-skyscraper { max-width: 300px; }
-  .ad-skyscraper .ad-box { min-height: 600px; }
-  .ad-list { max-width: 728px; }
-  .ad-list .ad-box { min-height: 90px; }
+  /*
+   * --ad-h is the ad height of each variant per breakpoint. The frame reserves it and the <ins>
+   * is sized to it (full width, fixed height), so AdSense requests exactly that size and the
+   * frame never grows. The in-article unit is fluid: --ad-h is only its reserved minimum there.
+   */
+  .ad-box { min-height: var(--ad-h); }
+  .ad-box > ins { display: block; width: 100%; height: var(--ad-h); }
+  .ad-in-article .ad-box > ins { height: auto; }
+  .ad-leaderboard { --ad-h: 90px; max-width: 728px; }
+  .ad-in-article { --ad-h: 280px; }
+  .ad-rectangle { --ad-h: 280px; max-width: 336px; }
+  .ad-skyscraper { --ad-h: 600px; max-width: 300px; }
+  .ad-list { --ad-h: 90px; max-width: 728px; }
   @media (max-width: 767px) {
-    .ad-leaderboard .ad-box, .ad-list .ad-box { min-height: 100px; }
-    .ad-rectangle { max-width: 300px; }
-    .ad-rectangle .ad-box { min-height: 250px; }
+    .ad-leaderboard, .ad-list { --ad-h: 100px; }
+    .ad-rectangle { --ad-h: 250px; max-width: 300px; }
+  }
+  /* The skyscraper only exists in the desktop sidebar (.only-lg). Hiding the <ins> itself, not just
+     an ancestor, is what stops AdSense from requesting a 0x600 ad on smaller screens. */
+  @media (max-width: 1023px) {
+    .ad-skyscraper .ad-box > ins { display: none; }
   }
 }
 

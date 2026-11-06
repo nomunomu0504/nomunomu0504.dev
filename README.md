@@ -46,7 +46,7 @@ Pages are thin wrappers around `src/views/*`, so each page body exists once and 
 
 Google Tag Manager loads when `PUBLIC_GTM_ID` is set (`src/components/GoogleTagManager.astro`); GA4 is configured inside the container, not in the page. Consent Mode v2 defaults are pushed from the same opt-out choice before the container loads.
 
-`src/components/AdSlot.astro` reserves fixed-height AdSense slots (`leaderboard`, `in-article`, `rectangle`, `skyscraper`, `list`). Slots render as placeholders until `PUBLIC_ADSENSE_CLIENT` and the per-slot `PUBLIC_ADSENSE_SLOT_*` IDs are set (see `.env.example`). Replace `public/ads.txt` before going live.
+`src/components/AdSlot.astro` reserves fixed-height AdSense slots (`leaderboard`, `in-article`, `rectangle`, `skyscraper`, `list`). Slots render as placeholders until `PUBLIC_ADSENSE_CLIENT` and the per-slot `PUBLIC_ADSENSE_SLOT_*` IDs are set (see `.env.example`). Create the units in AdSense as *Responsive* display units (plus one *In-article* unit): the page sizes the display `<ins>` itself (full width, fixed height per breakpoint) so the ad can never outgrow its frame. Replace `public/ads.txt` before going live.
 
 Consent is opt-out: AdSense loads and consent signals are granted unless the visitor turns ad/analytics cookies off from the banner or the footer's "Cookie settings". EEA/UK opt-in must be handled by Google's certified CMP (enable it in the AdSense console).
 
