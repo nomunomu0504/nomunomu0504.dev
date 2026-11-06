@@ -4,8 +4,10 @@
   "name": "nomunomu0504-site",
   "compatibility_date": "2026-11-01",
   // Production hostname. A Custom Domain makes the Worker the origin for the whole zone apex;
-  // Cloudflare manages the DNS record and certificate. The workers.dev URL stays on as a check URL.
+  // Cloudflare manages the DNS record and certificate. The workers.dev hostname is off so the
+  // site exists under one hostname only (no duplicate content, no stray ad or analytics hits).
   "routes": [{ "pattern": "nomunomu0504.dev", "custom_domain": true }],
+  "workers_dev": false,
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page",
