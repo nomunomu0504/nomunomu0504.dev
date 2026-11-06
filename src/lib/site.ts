@@ -7,8 +7,8 @@ export const site = {
   repo: 'https://github.com/nomunomu0504/nomunomu0504.dev',
   role: 'CTO, MIRAI STUDIO',
   companyUrl: 'https://miraistudio.co.jp',
-  /** Public contact address shown on About. Leave empty to hide the row. */
-  email: '' as string,
+  /** Public contact addresses shown on About, work address first. Leave empty to hide the row. */
+  emails: ['nomura@miraistudio.co.jp', 'h.nomura0504@gmail.com'],
   location: 'TOKYO, JP',
   description: {
     ja: 'みらいスタジオ CTO。Flutter、AWS、Cloudflare、自宅サーバーまわりの話を書いています。',

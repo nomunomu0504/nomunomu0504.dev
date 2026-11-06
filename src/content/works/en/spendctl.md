@@ -7,7 +7,7 @@ kind: "AGENTS · PAYMENTS"
 status: "EARLY ACCESS"
 active: true
 role: "Founder · Developer"
-stack: ["TypeScript", "Python", "x402", "Stripe MPP", "MCP"]
+stack: ["TypeScript", "Python", "Cloudflare Workers", "x402", "Stripe MPP", "MCP"]
 links:
   website: "https://spendctl.dev"
   github: "https://github.com/miraistudio/spendctl-sdk"

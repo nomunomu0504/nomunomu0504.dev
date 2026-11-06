@@ -8,7 +8,7 @@ status: "LIVE"
 active: true
 period: "2026.10 — present"
 role: "Founder · Developer"
-stack: ["TypeScript", "MCP", "Node.js"]
+stack: ["TypeScript", "MCP", "Node.js", "Cloudflare Workers", "Hono"]
 links:
   website: "https://forecall.dev"
   github: "https://github.com/forecall/forecall-cli"

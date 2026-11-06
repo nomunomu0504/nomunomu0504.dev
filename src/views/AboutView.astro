@@ -25,14 +25,15 @@ const copy = {
       { period: '2020.03', title: '福井工業高等専門学校 専攻科 卒業', body: '在学中から高専キャリアの活動に参加。学生向けイベントの運営と技術担当。' },
     ],
     skills: [
-      { label: 'MOBILE', body: 'Flutter / Dart を中心に iOS・Android。リリース運用、ストア審査、CI まで。', tags: ['Flutter', 'Dart', 'Riverpod', 'Swift'] },
+      { label: 'MOBILE', body: 'Flutter / Dart を中心に iOS・Android。個人開発では React Native（Expo）も。リリース運用、ストア審査、CI まで。', tags: ['Flutter', 'Dart', 'Riverpod', 'React Native', 'Expo', 'Swift'] },
       { label: 'CLOUD', body: 'AWS を CDK でコード化。ECS / Lambda / RDS を中心に、コストと運用のバランスを取る設計。', tags: ['AWS', 'CDK', 'ECS', 'Lambda', 'Cloudflare'] },
-      { label: 'DATA', body: 'PostgreSQL。スキーマ設計、レプリケーション、PostGIS。', tags: ['PostgreSQL', 'PostGIS', 'Neon'] },
+      { label: 'DATA', body: 'PostgreSQL。スキーマ設計、レプリケーション、PostGIS。', tags: ['PostgreSQL', 'PostGIS', 'Neon', 'Supabase'] },
       { label: 'INFRA / OPS', body: 'Docker、CI/CD、自宅の Proxmox クラスタ。壊して直すのが一番の学習。', tags: ['Docker', 'GitHub Actions', 'Proxmox', 'LXC', 'Tailscale'] },
       { label: 'LANGUAGES', body: '仕事で書く順。', tags: ['Dart', 'TypeScript', 'Rust', 'Go', 'Python'] },
       { label: 'OTHER', body: '技術選定、チーム立ち上げ、採用面接、学生向けイベントの運営。', tags: ['Tech lead', 'Hiring', 'KOSEN Career'] },
     ],
     contactNote: '技術顧問、設計相談、OSS、登壇など。返信は数日以内に。',
+    emailNotes: ['会社', '個人'],
     xNote: 'DM 開放中',
     companyNote: '会社宛ての相談は',
     companyLink: '会社サイト',
@@ -51,14 +52,15 @@ const copy = {
       { period: '2020.03', title: 'National Institute of Technology, Fukui College — Advanced Course', body: 'Joined KOSEN Career activities as a student, running and supporting events for students.' },
     ],
     skills: [
-      { label: 'MOBILE', body: 'iOS and Android with Flutter / Dart, from release operations and store review to CI.', tags: ['Flutter', 'Dart', 'Riverpod', 'Swift'] },
+      { label: 'MOBILE', body: 'iOS and Android with Flutter / Dart, plus React Native (Expo) for side projects, from release operations and store review to CI.', tags: ['Flutter', 'Dart', 'Riverpod', 'React Native', 'Expo', 'Swift'] },
       { label: 'CLOUD', body: 'AWS as code with CDK. ECS / Lambda / RDS designs that balance cost and operations.', tags: ['AWS', 'CDK', 'ECS', 'Lambda', 'Cloudflare'] },
-      { label: 'DATA', body: 'PostgreSQL: schema design, replication, PostGIS.', tags: ['PostgreSQL', 'PostGIS', 'Neon'] },
+      { label: 'DATA', body: 'PostgreSQL: schema design, replication, PostGIS.', tags: ['PostgreSQL', 'PostGIS', 'Neon', 'Supabase'] },
       { label: 'INFRA / OPS', body: 'Docker, CI/CD, and a Proxmox cluster at home. Breaking and fixing things is how I learn.', tags: ['Docker', 'GitHub Actions', 'Proxmox', 'LXC', 'Tailscale'] },
       { label: 'LANGUAGES', body: 'In order of how much I write at work.', tags: ['Dart', 'TypeScript', 'Rust', 'Go', 'Python'] },
       { label: 'OTHER', body: 'Technology selection, team building, hiring interviews, student events.', tags: ['Tech lead', 'Hiring', 'KOSEN Career'] },
     ],
     contactNote: 'Advisory, architecture reviews, open source, speaking. I reply within a few days.',
+    emailNotes: ['work', 'personal'],
     xNote: 'DMs open',
     companyNote: 'For company matters, use the',
     companyLink: 'company site',
@@ -131,11 +133,16 @@ const c = copy[locale];
       </div>
       <dl class="kv-plain mono text-sm md:col-span-2">
         {
-          site.email && (
+          site.emails.length > 0 && (
             <>
               <dt class="label">EMAIL</dt>
-              <dd>
-                <a href={`mailto:${site.email}`} class="ink-link">{site.email}</a>
+              <dd class="flex flex-col gap-1">
+                {site.emails.map((address, i) => (
+                  <span>
+                    <a href={`mailto:${address}`} class="ink-link">{address}</a>
+                    {c.emailNotes[i] && <> — {c.emailNotes[i]}</>}
+                  </span>
+                ))}
               </dd>
             </>
           )
