@@ -5,6 +5,7 @@ export const site = {
   name: 'Hiroki Nomura',
   nameJa: '野村 弘樹',
   handle: 'nomunomu0504',
+  repo: 'https://github.com/nomunomu0504/nomunomu0504.dev',
   role: 'CTO, MIRAI STUDIO',
   location: 'TOKYO, JP',
   description: {
