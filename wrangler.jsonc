@@ -3,6 +3,9 @@
   // Static-assets-only Worker. No server code; Astro output in ./dist is served as-is.
   "name": "nomunomu0504-site",
   "compatibility_date": "2026-11-01",
+  // Production hostname. A Custom Domain makes the Worker the origin for the whole zone apex;
+  // Cloudflare manages the DNS record and certificate. The workers.dev URL stays on as a check URL.
+  "routes": [{ "pattern": "nomunomu0504.dev", "custom_domain": true }],
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page",

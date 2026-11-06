@@ -1,0 +1,10 @@
+# Paths left over from the Hatena Blog that lived on this domain until 2026-11.
+# Feeds and the archive move permanently; old entries go to the blog index for now and get
+# their own rules when an article is migrated (see README).
+/feed /rss.xml 301
+/feed/* /rss.xml 301
+/rss /rss.xml 301
+/rss/* /rss.xml 301
+/archive /blog/ 301
+/archive/* /blog/ 301
+/entry/* /blog/ 302

@@ -54,6 +54,8 @@ Consent is opt-out: AdSense loads and consent signals are granted unless the vis
 
 `.github/workflows/deploy.yml` deploys `main` with `cloudflare/wrangler-action`. Required repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Site URL and ad/giscus IDs are read from repository variables (`vars.*`).
 
+`wrangler.jsonc` attaches the Worker to `nomunomu0504.dev` as a Custom Domain, so Cloudflare owns the apex DNS record and certificate; the `workers.dev` URL stays available as a check URL. `public/_redirects` carries the paths left over from the Hatena Blog that previously lived on the domain (`/feed`, `/rss`, `/archive`, `/entry/*`). When an old article is migrated, add a specific `/entry/YYYY/MM/DD/HHMMSS /blog/<slug>/ 301` line above the catch-all.
+
 ## Notes
 
 - `package.json` pins `@emnapi/runtime` to 1.11.3 through `overrides` because `@astrojs/astro2tsx` (used by `astro check`) is not yet compatible with the 2.x runtime that rolldown hoists. Remove the override once `astro check` works without it.
