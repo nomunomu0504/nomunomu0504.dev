@@ -4,6 +4,7 @@ import '@fontsource-variable/geist-mono';
 import '@fontsource-variable/noto-sans-jp';
 import '@/styles/global.css';
 import geistUrl from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import GoogleTagManager from '@/components/GoogleTagManager.astro';
 import CookieConsent from '@/components/CookieConsent.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
@@ -46,6 +47,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL(ogImage, Astro.site);
 const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? '';
+const gtmId = import.meta.env.PUBLIC_GTM_ID ?? '';
 ---
 
 <!doctype html>
@@ -97,9 +99,17 @@ const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? '';
         } catch (_) {}
       })();
     </script>
+    {gtmId && <GoogleTagManager id={gtmId} />}
     <slot name="head" />
   </head>
   <body class="bg-bg font-sans text-fg">
+    {
+      gtmId && (
+        <noscript>
+          <iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager" />
+        </noscript>
+      )
+    }
     <a href="#main" class="btn sm sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-bg">
       {t('skip.main')}
     </a>

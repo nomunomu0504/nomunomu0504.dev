@@ -1,5 +1,6 @@
 interface ImportMetaEnv {
   readonly SITE_URL?: string;
+  readonly PUBLIC_GTM_ID?: string;
   readonly PUBLIC_ADSENSE_CLIENT?: string;
   readonly PUBLIC_ADSENSE_SLOT_LEADERBOARD?: string;
   readonly PUBLIC_ADSENSE_SLOT_IN_ARTICLE?: string;

@@ -42,11 +42,13 @@ Pages are thin wrappers around `src/views/*`, so each page body exists once and 
 - `scripts/new.ts` creates dated Markdown stubs under `src/content/`.
 - `scripts/og-fonts.py` vendors the fonts used by `src/lib/og.ts`, which renders Open Graph images at build time (`/og/<locale>/<blog|works>/<slug>.png` and `/og/default.png`).
 
-## Ads
+## Ads and analytics
+
+Google Tag Manager loads when `PUBLIC_GTM_ID` is set (`src/components/GoogleTagManager.astro`); GA4 is configured inside the container, not in the page. Consent Mode v2 defaults are pushed from the same opt-out choice before the container loads.
 
 `src/components/AdSlot.astro` reserves fixed-height AdSense slots (`leaderboard`, `in-article`, `rectangle`, `skyscraper`, `list`). Slots render as placeholders until `PUBLIC_ADSENSE_CLIENT` and the per-slot `PUBLIC_ADSENSE_SLOT_*` IDs are set (see `.env.example`). Replace `public/ads.txt` before going live.
 
-Consent is opt-out: AdSense loads unless the visitor turns ad cookies off from the banner or the footer's "Cookie settings". EEA/UK opt-in must be handled by Google's certified CMP (enable it in the AdSense console).
+Consent is opt-out: AdSense loads and consent signals are granted unless the visitor turns ad/analytics cookies off from the banner or the footer's "Cookie settings". EEA/UK opt-in must be handled by Google's certified CMP (enable it in the AdSense console).
 
 ## Deploy
 

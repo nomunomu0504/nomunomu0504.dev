@@ -1,8 +1,9 @@
 ---
 /**
- * First-visit cookie notice (opt-out model). Ads are on by default; "Essential only" turns ad
- * cookies off and "OK" just dismisses. The choice lives in localStorage and can be reopened from
- * the footer. Rendered only when a cookie-setting service is configured.
+ * First-visit cookie notice (opt-out model). Ads and analytics are on by default; the opt-out button
+ * turns their cookies off and "OK" just dismisses. The choice lives in localStorage and can be
+ * reopened from the footer. Rendered only when a cookie-setting service (GTM, AdSense, giscus) is
+ * configured.
  */
 import { localeHref, type Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
@@ -13,7 +14,9 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-const enabled = Boolean(import.meta.env.PUBLIC_ADSENSE_CLIENT || import.meta.env.PUBLIC_GISCUS_REPO);
+const enabled = Boolean(
+  import.meta.env.PUBLIC_GTM_ID || import.meta.env.PUBLIC_ADSENSE_CLIENT || import.meta.env.PUBLIC_GISCUS_REPO,
+);
 ---
 
 {

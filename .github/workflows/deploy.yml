@@ -31,6 +31,7 @@ jobs:
       - run: bun run build
         env:
           SITE_URL: ${{ vars.SITE_URL }}
+          PUBLIC_GTM_ID: ${{ vars.PUBLIC_GTM_ID }}
           PUBLIC_ADSENSE_CLIENT: ${{ vars.PUBLIC_ADSENSE_CLIENT }}
           PUBLIC_ADSENSE_SLOT_LEADERBOARD: ${{ vars.PUBLIC_ADSENSE_SLOT_LEADERBOARD }}
           PUBLIC_ADSENSE_SLOT_IN_ARTICLE: ${{ vars.PUBLIC_ADSENSE_SLOT_IN_ARTICLE }}

@@ -1,0 +1,55 @@
+---
+/**
+ * Google Tag Manager, rendered only when PUBLIC_GTM_ID is set. GA4 lives inside the container.
+ *
+ * Consent Mode v2 defaults are pushed before the container loads, derived from the same opt-out
+ * choice the cookie banner stores in localStorage ("essential" = ad and analytics storage denied).
+ * Later changes are forwarded as consent updates. AdSense stays embedded directly in BaseLayout and
+ * reads the same signals from the dataLayer.
+ */
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<script is:inline define:vars={{ id }}>
+  (function () {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag =
+      window.gtag ||
+      function () {
+        window.dataLayer.push(arguments);
+      };
+
+    function consent() {
+      try {
+        return localStorage.getItem('consent');
+      } catch (_) {
+        return null;
+      }
+    }
+    function signals(granted) {
+      var value = granted ? 'granted' : 'denied';
+      return {
+        ad_storage: value,
+        ad_user_data: value,
+        ad_personalization: value,
+        analytics_storage: value,
+      };
+    }
+
+    // Opt-out model: everything is granted unless the visitor turned ad/analytics cookies off.
+    window.gtag('consent', 'default', signals(consent() !== 'essential'));
+    window.addEventListener('consent:changed', function (e) {
+      window.gtag('consent', 'update', signals(e.detail !== 'essential'));
+    });
+
+    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(id);
+    document.head.appendChild(script);
+  })();
+</script>

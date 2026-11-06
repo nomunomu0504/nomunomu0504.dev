@@ -13,23 +13,23 @@ const t = useTranslations(locale);
 const aboutHref = localeHref(locale, '/about/');
 
 // TODO: review before launch. AdSense requires a privacy policy that discloses third-party cookies.
-const updated = '2026.11.01';
+const updated = '2026.11.06';
 const sections = {
   ja: [
     { id: 'collected', title: '収集する情報', html: 'このサイトは会員登録や問い合わせフォームを持ちません。閲覧時にブラウザが送る情報（IP アドレス、User-Agent、参照元）は、配信に使っている Cloudflare と、下記の第三者サービスが処理します。' },
-    { id: 'cookies', title: 'Cookie と同意', html: '広告とコメント機能のために Cookie を使います。広告 Cookie は既定で有効で、初回訪問時のバナー、またはフッターの「Cookie 設定」からいつでも無効にできます。選択はブラウザのローカルストレージに保存されます。EU・英国からのアクセスには、Google の同意管理メッセージが別途表示されます。' },
+    { id: 'cookies', title: 'Cookie と同意', html: '広告、アクセス解析、コメント機能のために Cookie を使います。広告と解析の Cookie は既定で有効で、初回訪問時のバナー、またはフッターの「Cookie 設定」からいつでも無効にできます。選択はブラウザのローカルストレージに保存されます。EU・英国からのアクセスには、Google の同意管理メッセージが別途表示されます。' },
     { id: 'adsense', title: 'Google AdSense', html: 'このサイトは Google AdSense による広告を掲載しています。Google は Cookie を使って、このサイトや他のサイトへのアクセス情報に基づく広告を表示することがあります。パーソナライズ広告は <a href="https://www.google.com/settings/ads">Google の広告設定</a> で無効にできます。詳細は <a href="https://policies.google.com/technologies/ads">Google のポリシーと規約</a> を参照してください。EU・英国からのアクセスには、Google の同意管理メッセージが表示されます。' },
     { id: 'comments', title: 'コメント（giscus）', html: '記事のコメント欄は giscus を使い、GitHub Discussions に保存されます。コメントの投稿には GitHub アカウントでのログインが必要で、投稿内容は GitHub の利用規約に従います。' },
-    { id: 'analytics', title: 'アクセス解析', html: 'Cloudflare Web Analytics を使っています。Cookie を使わず、個人を特定する情報は収集しません。' },
+    { id: 'analytics', title: 'アクセス解析（Google アナリティクス）', html: 'Google タグマネージャー経由で Google アナリティクス 4 を使い、閲覧ページや流入元などのアクセス状況を計測しています。Google アナリティクスは Cookie を使い、データは Google が処理します。計測は上記の Cookie 設定で無効にできるほか、<a href="https://tools.google.com/dlpage/gaoptout">Google アナリティクス オプトアウト アドオン</a>でも停止できます。詳細は <a href="https://policies.google.com/technologies/partner-sites">Google のポリシー</a> を参照してください。' },
     { id: 'links', title: '外部リンク', html: 'GitHub、App Store、Google Play などへのリンク先での情報の扱いは、各サービスのポリシーに従います。' },
     { id: 'contact', title: 'お問い合わせ', html: `このポリシーに関する質問は <a href="${aboutHref}">About</a> に記載の連絡先まで。` },
   ],
   en: [
     { id: 'collected', title: 'What is collected', html: 'This site has no accounts and no contact form. Information your browser sends when loading pages (IP address, user agent, referrer) is processed by Cloudflare, which serves the site, and by the third-party services below.' },
-    { id: 'cookies', title: 'Cookies and consent', html: 'Cookies are used for advertising and comments. Advertising cookies are on by default; you can turn them off from the first-visit banner or from "Cookie settings" in the footer at any time. The choice is stored in your browser\'s local storage. Visitors from the EU and UK are shown Google\'s consent management message in addition.' },
+    { id: 'cookies', title: 'Cookies and consent', html: 'Cookies are used for advertising, analytics, and comments. Advertising and analytics cookies are on by default; you can turn them off from the first-visit banner or from "Cookie settings" in the footer at any time. The choice is stored in your browser\'s local storage. Visitors from the EU and UK are shown Google\'s consent management message in addition.' },
     { id: 'adsense', title: 'Google AdSense', html: 'This site shows ads served by Google AdSense. Google may use cookies to show ads based on your visits to this and other sites. You can opt out of personalized advertising in <a href="https://www.google.com/settings/ads">Google\'s ad settings</a>; see <a href="https://policies.google.com/technologies/ads">Google\'s policies</a> for details. Visitors from the EU and UK are shown Google\'s consent management message.' },
     { id: 'comments', title: 'Comments (giscus)', html: 'Comments are powered by giscus and stored in GitHub Discussions. Posting requires signing in with a GitHub account, and comments are subject to GitHub\'s terms.' },
-    { id: 'analytics', title: 'Analytics', html: 'Cloudflare Web Analytics is used. It sets no cookies and collects no personally identifiable information.' },
+    { id: 'analytics', title: 'Analytics (Google Analytics)', html: 'Google Analytics 4 is loaded through Google Tag Manager to measure page views and traffic sources. Google Analytics uses cookies, and the data is processed by Google. You can turn measurement off from the cookie settings above or with the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out add-on</a>. See <a href="https://policies.google.com/technologies/partner-sites">Google\'s policy</a> for details.' },
     { id: 'links', title: 'External links', html: 'Information handling on linked sites such as GitHub, the App Store, and Google Play follows each service\'s own policy.' },
     { id: 'contact', title: 'Contact', html: `Questions about this policy go to the contact details on the <a href="${aboutHref}">About</a> page.` },
   ],
