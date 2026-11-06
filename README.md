@@ -50,6 +50,10 @@ Google Tag Manager loads when `PUBLIC_GTM_ID` is set (`src/components/GoogleTagM
 
 Consent is opt-out: AdSense loads and consent signals are granted unless the visitor turns ad/analytics cookies off from the banner or the footer's "Cookie settings". EEA/UK opt-in must be handled by Google's certified CMP (enable it in the AdSense console).
 
+## Structured data
+
+`src/lib/schema.ts` builds the JSON-LD graph that `BaseLayout` emits on every page: `WebSite` and `Person` everywhere, plus `BlogPosting` + `BreadcrumbList` on posts, `SoftwareSourceCode` / `SoftwareApplication` / `CreativeWork` + `BreadcrumbList` on works, and `ProfilePage` on About. Views pass their nodes through the layout's `schema` prop. Check new page types with Google's Rich Results Test.
+
 ## Deploy
 
 `.github/workflows/deploy.yml` deploys `main` with `cloudflare/wrangler-action`. Required repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Site URL and ad/giscus IDs are read from repository variables (`vars.*`).

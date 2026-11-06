@@ -21,6 +21,7 @@ import {
   type Post,
 } from '@/lib/content';
 import { ogImagePath } from '@/lib/og';
+import { blogPostingNode, breadcrumbNode } from '@/lib/schema';
 import { site } from '@/lib/site';
 
 interface Props {
@@ -48,16 +49,37 @@ const minutes = readingTime(post.body, locale);
 const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const primaryTag = post.data.tags[0];
 const blogHref = localeHref(locale, '/blog/');
+const postPath = localeHref(locale, `/blog/${slug}/`);
+const ogImage = ogImagePath(locale, 'blog', slug);
+const siteUrl = new URL('/', Astro.site);
+const schema = [
+  blogPostingNode(siteUrl, {
+    path: postPath,
+    title: post.data.title,
+    description: post.data.description,
+    published: post.data.pubDate,
+    updated: post.data.updatedDate,
+    image: ogImage,
+    tags: post.data.tags,
+    locale,
+  }),
+  breadcrumbNode(siteUrl, [
+    { name: site.name, path: localeHref(locale, '/') },
+    { name: t('blog.title'), path: blogHref },
+    { name: post.data.title, path: postPath },
+  ]),
+];
 ---
 
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
-  ogImage={ogImagePath(locale, 'blog', slug)}
+  ogImage={ogImage}
   type="article"
   alternates={alternates}
   publishedTime={post.data.pubDate}
   modifiedTime={post.data.updatedDate}
+  schema={schema}
 >
   <article data-pagefind-body>
     <header class="border-b border-rule">

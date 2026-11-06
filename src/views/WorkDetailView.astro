@@ -8,6 +8,8 @@ import { localeHref, otherLocale, type Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
 import { getTranslation, getWorks, slugOf, type Work } from '@/lib/content';
 import { ogImagePath } from '@/lib/og';
+import { breadcrumbNode, softwareNode } from '@/lib/schema';
+import { site } from '@/lib/site';
 
 interface Props {
   locale: Locale;
@@ -43,6 +45,25 @@ const linkRows = [
   ...links.other.map((item) => ({ label: item.label, url: item.url })),
 ];
 const typeLabel = t(`works.type.${work.data.type}`);
+const workPath = localeHref(locale, `/works/${slug}/`);
+const ogImage = ogImagePath(locale, 'works', slug);
+const siteUrl = new URL('/', Astro.site);
+const schema = [
+  softwareNode(siteUrl, {
+    path: workPath,
+    name: work.data.title,
+    description: work.data.description,
+    image: ogImage,
+    type: work.data.type,
+    github: links.github,
+    sameAs: linkRows.flatMap((row) => (row.url ? [row.url] : [])),
+  }),
+  breadcrumbNode(siteUrl, [
+    { name: site.name, path: localeHref(locale, '/') },
+    { name: t('works.title'), path: localeHref(locale, '/works/') },
+    { name: work.data.title, path: workPath },
+  ]),
+];
 const shots = work.data.screenshots.length > 0
   ? work.data.screenshots
   : work.data.cover
@@ -53,8 +74,9 @@ const shots = work.data.screenshots.length > 0
 <BaseLayout
   title={work.data.title}
   description={work.data.description}
-  ogImage={ogImagePath(locale, 'works', slug)}
+  ogImage={ogImage}
   alternates={alternates}
+  schema={schema}
 >
   <article data-pagefind-body>
     <header class="border-b border-rule">

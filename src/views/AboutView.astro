@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import type { Locale } from '@/i18n/config';
+import { localeHref, type Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
+import { profilePageNode } from '@/lib/schema';
 import { site } from '@/lib/site';
 
 interface Props {
@@ -68,9 +69,10 @@ const copy = {
   },
 } satisfies Record<Locale, unknown>;
 const c = copy[locale];
+const schema = [profilePageNode(new URL('/', Astro.site), localeHref(locale, '/about/'))];
 ---
 
-<BaseLayout title={t('about.title')} description={site.description[locale]}>
+<BaseLayout title={t('about.title')} description={site.description[locale]} schema={schema}>
   <section class="border-b border-rule">
     <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-end gap-12 pt-14 pb-12">
       <div class="flex flex-col gap-3.5">

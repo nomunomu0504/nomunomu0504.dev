@@ -16,6 +16,7 @@ import {
   type Locale,
 } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
+import { personNode, serialize, websiteNode, type SchemaNode } from '@/lib/schema';
 import { site } from '@/lib/site';
 
 interface Props {
@@ -28,6 +29,8 @@ interface Props {
   noindex?: boolean;
   publishedTime?: Date;
   modifiedTime?: Date;
+  /** Extra JSON-LD nodes for this page; WebSite and Person are always included. */
+  schema?: SchemaNode[];
 }
 
 const locale = resolveLocale(Astro.currentLocale);
@@ -40,12 +43,15 @@ const {
   noindex = false,
   publishedTime,
   modifiedTime,
+  schema = [],
 } = Astro.props;
 const alternates = Astro.props.alternates ?? defaultAlternates(Astro.url.pathname, locale);
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL(ogImage, Astro.site);
 const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
+const siteUrl = new URL('/', Astro.site);
+const jsonLd = serialize([websiteNode(siteUrl, locale), personNode(siteUrl, locale), ...schema]);
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? '';
 const gtmId = import.meta.env.PUBLIC_GTM_ID ?? '';
 ---
@@ -85,6 +91,7 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID ?? '';
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="generator" content={Astro.generator} />
+    <script type="application/ld+json" set:html={jsonLd} />
 
     <link rel="preload" as="font" type="font/woff2" href={geistUrl} crossorigin="anonymous" />
 
