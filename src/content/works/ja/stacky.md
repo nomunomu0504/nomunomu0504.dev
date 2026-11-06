@@ -1,5 +1,4 @@
 ---
-# TODO: confirm the app framework (native Swift or Flutter) for `stack`.
 title: "Stacky"
 description: "コピーが、積もっていく。iPhone と Mac のクリップボード履歴・定型文マネージャー。端末の中だけに保存、広告なし。"
 date: 2026-07-26
@@ -8,7 +7,7 @@ kind: "iOS · macOS"
 status: "iOS / macOS"
 active: true
 role: "設計・実装・運用"
-stack: ["iOS", "macOS"]
+stack: ["React Native", "Expo", "Swift", "AppKit"]
 links:
   website: "https://stacky.tools"
   appStore: "https://apps.apple.com/app/id6794009964"
@@ -29,4 +28,5 @@ order: 8
 
 ## 技術的なポイント
 
+- iPhone 版は React Native（Expo）、Mac 版は Swift / AppKit のネイティブアプリ
 - すべて端末の中だけに保存し、外部サーバーへは送らない。広告もない

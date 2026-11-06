@@ -11,7 +11,6 @@ interface Props {
 const { locale } = Astro.props;
 const t = useTranslations(locale);
 
-// TODO: fill in the [YEAR] placeholders, the public email, and the company site URL.
 const copy = {
   ja: {
     heading: site.nameJa,
@@ -19,11 +18,11 @@ const copy = {
     intro:
       '株式会社みらいスタジオ 取締役 CTO。受託・自社開発のチームを率いながら、個人事業としてスタートアップの開発支援もしています。モバイルからインフラまで、動くものを最後まで自分で面倒を見るのが好きです。',
     timeline: [
-      { period: '[YEAR] —', title: '株式会社みらいスタジオ — 取締役 CTO', body: 'エンジニアチームの技術方針、受託・自社開発の両立、採用。並行して個人事業として他社スタートアップの開発支援。' },
-      { period: '[YEAR]', title: 'みらいスタジオ — テックリード', body: 'エンジニアチームを率い、Flutter と AWS（CDK / ECS / Lambda）を軸にした標準構成を整備。' },
-      { period: '[YEAR]', title: 'みらいスタジオ — シニアエンジニア / スタジオディレクター', body: '受託案件の設計・実装と、スタジオ運営。' },
-      { period: '[YEAR]', title: '地元の IT 企業 — 開発', body: '受託開発案件に従事。Web とモバイルの両方。' },
-      { period: '[YEAR]', title: '福井工業高等専門学校 専攻科 卒業', body: '在学中から高専キャリアの活動に参加。学生向けイベントの運営と技術担当。' },
+      { period: '2026.04 —', title: '株式会社みらいスタジオ — 取締役 CTO', body: 'エンジニアチームの技術方針、受託・自社開発の両立、採用。並行して個人事業として他社スタートアップの開発支援。' },
+      { period: '2023.03 — 2026.03', title: 'みらいスタジオ — 執行役員 CTO', body: 'エンジニアチームを率い、Flutter と AWS（CDK / ECS / Lambda）を軸にした標準構成を整備。' },
+      { period: '2022.10 — 2023.02', title: 'みらいスタジオ — シニアエンジニア / スタジオディレクター', body: '受託案件の設計・実装と、スタジオ運営。' },
+      { period: '2020.04 — 2022.09', title: '株式会社ナンバーフォー — 開発', body: '受託開発案件に従事。Web とモバイルの両方。' },
+      { period: '2020.03', title: '福井工業高等専門学校 専攻科 卒業', body: '在学中から高専キャリアの活動に参加。学生向けイベントの運営と技術担当。' },
     ],
     skills: [
       { label: 'MOBILE', body: 'Flutter / Dart を中心に iOS・Android。リリース運用、ストア審査、CI まで。', tags: ['Flutter', 'Dart', 'Riverpod', 'Swift'] },
@@ -45,11 +44,11 @@ const copy = {
     intro:
       'CTO and board member at Mirai Studio Inc. I lead the client-work and in-house product teams, and support startups as an independent engineer on the side. I like owning things end to end, from mobile apps down to the infrastructure they run on.',
     timeline: [
-      { period: '[YEAR] —', title: 'Mirai Studio Inc. — CTO, Board Member', body: 'Technical direction for the engineering team, balancing client work with in-house products, hiring. Independent development support for other startups in parallel.' },
-      { period: '[YEAR]', title: 'Mirai Studio — Tech Lead', body: 'Led the engineering team and established a standard stack around Flutter and AWS (CDK / ECS / Lambda).' },
-      { period: '[YEAR]', title: 'Mirai Studio — Senior Engineer / Studio Director', body: 'Design and implementation of client projects, plus studio operations.' },
-      { period: '[YEAR]', title: 'Local IT company — Developer', body: 'Client projects across web and mobile.' },
-      { period: '[YEAR]', title: 'National Institute of Technology, Fukui College — Advanced Course', body: 'Joined KOSEN Career activities as a student, running and supporting events for students.' },
+      { period: '2026.04 —', title: 'Mirai Studio Inc. — CTO, Board Member', body: 'Technical direction for the engineering team, balancing client work with in-house products, hiring. Independent development support for other startups in parallel.' },
+      { period: '2023.03 — 2026.03', title: 'Mirai Studio — Executive Officer, CTO', body: 'Led the engineering team and established a standard stack around Flutter and AWS (CDK / ECS / Lambda).' },
+      { period: '2022.10 — 2023.02', title: 'Mirai Studio — Senior Engineer / Studio Director', body: 'Design and implementation of client projects, plus studio operations.' },
+      { period: '2020.04 — 2022.09', title: 'Number Four Inc. — Developer', body: 'Client projects across web and mobile.' },
+      { period: '2020.03', title: 'National Institute of Technology, Fukui College — Advanced Course', body: 'Joined KOSEN Career activities as a student, running and supporting events for students.' },
     ],
     skills: [
       { label: 'MOBILE', body: 'iOS and Android with Flutter / Dart, from release operations and store review to CI.', tags: ['Flutter', 'Dart', 'Riverpod', 'Swift'] },
@@ -131,8 +130,16 @@ const c = copy[locale];
         <p class="m-0 max-w-[28em] text-sm text-fg-2">{c.contactNote}</p>
       </div>
       <dl class="kv-plain mono text-sm md:col-span-2">
-        <dt class="label">EMAIL</dt>
-        <dd><a href="#" class="ink-link">[公開用メールアドレス]</a></dd>
+        {
+          site.email && (
+            <>
+              <dt class="label">EMAIL</dt>
+              <dd>
+                <a href={`mailto:${site.email}`} class="ink-link">{site.email}</a>
+              </dd>
+            </>
+          )
+        }
         <dt class="label">X</dt>
         <dd><a href={site.social.x} rel="me noopener" class="underline-link">@{site.handle}</a> — {c.xNote}</dd>
         <dt class="label">GITHUB</dt>
@@ -140,7 +147,7 @@ const c = copy[locale];
         <dt class="label">LAPRAS</dt>
         <dd><a href={site.social.lapras} rel="me noopener" class="underline-link">lapras.com/public/{site.handle}</a></dd>
         <dt class="label">COMPANY</dt>
-        <dd>株式会社みらいスタジオ — {c.companyNote} <a href="#" class="underline-link">{c.companyLink}</a> {c.companyTail}</dd>
+        <dd>株式会社みらいスタジオ — {c.companyNote} <a href={site.companyUrl} rel="noopener" class="underline-link">{c.companyLink}</a> {c.companyTail}</dd>
       </dl>
     </div>
   </section>

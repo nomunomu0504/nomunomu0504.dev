@@ -1,5 +1,4 @@
 ---
-# TODO: confirm the mobile stack.
 title: "LaterHub"
 description: "後で読む・後で見るを、チームのナレッジに。記事・動画・資料を保存し、AI 要約と曖昧検索で共有する AI ブックマークサービス。"
 date: 2026-07-15
@@ -8,7 +7,7 @@ kind: "AI · TEAMS"
 status: "LIVE"
 active: true
 role: "設計・実装・運用"
-stack: ["iOS", "Android", "Chrome Extension", "Next.js", "Claude"]
+stack: ["Next.js", "React Native", "Expo", "Chrome Extension", "Supabase", "Claude"]
 links:
   website: "https://laterhub.app"
   appStore: "https://apps.apple.com/app/id6781946514"
@@ -28,4 +27,4 @@ order: 5
 
 - ブラウザ拡張、モバイルアプリ、OS の共有シートから保存
 - 保存したリンクは Claude が要約し、グループごとの既読状況と、共有やコメントのリアルタイム通知
-- Web、iOS、Android、Chrome 拡張
+- Web は Next.js、iOS / Android は React Native（Expo）、それに Chrome 拡張。バックエンドは Supabase

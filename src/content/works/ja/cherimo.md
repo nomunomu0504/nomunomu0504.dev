@@ -1,5 +1,4 @@
 ---
-# TODO: confirm the mobile stack.
 title: "Cherimo"
 description: "大切な人を、もっと大切に。恋人や家族の好み・苦手・記念日・贈り物・思い出を整理する、個人用の AI メモアプリ。"
 date: 2026-07-09
@@ -8,7 +7,7 @@ kind: "MOBILE"
 status: "iOS / Android"
 active: true
 role: "設計・実装・運用"
-stack: ["iOS", "Android", "RevenueCat"]
+stack: ["React Native", "Expo", "Supabase", "RevenueCat"]
 links:
   website: "https://cherimo.app"
   appStore: "https://apps.apple.com/app/id6781822737"
@@ -26,4 +25,4 @@ order: 6
 
 ## 技術的なポイント
 
-- iOS と Android で配信。サブスクリプションは RevenueCat で管理
+- iOS と Android に React Native（Expo）で配信。バックエンドは Supabase、サブスクリプションは RevenueCat で管理

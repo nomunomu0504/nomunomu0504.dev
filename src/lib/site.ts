@@ -1,12 +1,14 @@
 import type { Locale } from '@/i18n/config';
 
-// TODO: confirm the X, Zenn, and LAPRAS handles before launch.
 export const site = {
   name: 'Hiroki Nomura',
   nameJa: '野村 弘樹',
   handle: 'nomunomu0504',
   repo: 'https://github.com/nomunomu0504/nomunomu0504.dev',
   role: 'CTO, MIRAI STUDIO',
+  companyUrl: 'https://miraistudio.co.jp',
+  /** Public contact address shown on About. Leave empty to hide the row. */
+  email: '' as string,
   location: 'TOKYO, JP',
   description: {
     ja: 'みらいスタジオ CTO。Flutter、AWS、Cloudflare、自宅サーバーまわりの話を書いています。',

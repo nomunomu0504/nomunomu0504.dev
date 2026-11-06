@@ -1,8 +1,7 @@
 ---
-# TODO: set `date` to the launch date.
 title: "みんなの生ビールマップ"
 description: "飲みたい銘柄から、いま飲める生ビールの店が見つかる。みんなで育てるビールマップ。"
-date: 2026-01-01
+date: 2026-04-29
 type: "app"
 kind: "WEB · MAP"
 status: "LIVE"

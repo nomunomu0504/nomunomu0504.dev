@@ -1,8 +1,7 @@
 ---
-# TODO: set `date` to the launch date.
 title: "minnama.beer"
 description: "Find the bars pouring the draft beer you want, by brand. A beer map that grows with its users."
-date: 2026-01-01
+date: 2026-04-29
 type: "app"
 kind: "WEB · MAP"
 status: "LIVE"
